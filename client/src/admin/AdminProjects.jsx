@@ -7,12 +7,10 @@ const AdminProjects = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [activeTab, setActiveTab] = useState('id');
 
   const [formData, setFormData] = useState({
     title: '',
-    description_id: '',
-    description_en: '',
+    description: '',
     category: 'System',
     tags: 'Rust, Distributed Systems',
     project_url: '',
@@ -44,8 +42,7 @@ const AdminProjects = () => {
     setEditingId(null);
     setFormData({
       title: '',
-      description_id: '',
-      description_en: '',
+      description: '',
       category: 'System',
       tags: 'Rust, CLI',
       project_url: '',
@@ -60,8 +57,7 @@ const AdminProjects = () => {
     setEditingId(proj.id);
     setFormData({
       title: proj.title,
-      description_id: proj.description_id,
-      description_en: proj.description_en,
+      description: proj.description_id || proj.description_en,
       category: proj.category,
       tags: Array.isArray(proj.tags) ? proj.tags.join(', ') : proj.tags,
       project_url: proj.project_url || '',
@@ -87,8 +83,15 @@ const AdminProjects = () => {
     setSubmitting(true);
 
     const payload = {
-      ...formData,
-      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean)
+      title: formData.title,
+      description_id: formData.description,
+      description_en: formData.description,
+      category: formData.category,
+      tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
+      project_url: formData.project_url,
+      github_url: formData.github_url,
+      is_featured: formData.is_featured,
+      sort_order: formData.sort_order
     };
 
     try {
@@ -123,11 +126,11 @@ const AdminProjects = () => {
       </div>
 
       {loading ? (
-        <div className="text-sm font-mono text-zinc-500 py-4">Loading projects...</div>
+        <div className="text-sm font-mono text-zinc-500 py-4">Memuat proyek...</div>
       ) : (
-        <div className="rounded-2xl border border-subtle bg-white dark:bg-zinc-900 overflow-hidden">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-100 dark:bg-zinc-800/60 text-zinc-500 font-bold uppercase tracking-wider">
+        <div className="rounded-2xl border border-subtle bg-white dark:bg-zinc-900 overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead className="bg-zinc-100/80 dark:bg-zinc-800/40 text-zinc-500 font-bold uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800">
               <tr>
                 <th className="p-4">Nama Proyek</th>
                 <th className="p-4">Kategori</th>
@@ -136,7 +139,7 @@ const AdminProjects = () => {
                 <th className="p-4 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-subtle">
+            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800/60">
               {projects.map((p) => (
                 <tr key={p.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/30">
                   <td className="p-4 font-bold text-sm text-zinc-900 dark:text-zinc-100">{p.title}</td>
@@ -189,51 +192,17 @@ const AdminProjects = () => {
                 />
               </div>
 
-              {/* Bilingual Tab Switcher */}
-              <div className="flex border-b border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('id')}
-                  className={`px-4 py-2 text-xs font-bold transition-colors ${
-                    activeTab === 'id' ? 'border-b-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100' : 'text-zinc-400'
-                  }`}
-                >
-                  🇮🇩 Deskripsi (ID)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('en')}
-                  className={`px-4 py-2 text-xs font-bold transition-colors ${
-                    activeTab === 'en' ? 'border-b-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100' : 'text-zinc-400'
-                  }`}
-                >
-                  🇬🇧 Description (EN)
-                </button>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold">Deskripsi Proyek *</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Tuliskan deskripsi singkat mengenai proyek ini..."
+                  className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
+                />
               </div>
-
-              {activeTab === 'id' ? (
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold">Deskripsi Proyek (Bahasa Indonesia) *</label>
-                  <textarea
-                    rows={3}
-                    required
-                    value={formData.description_id}
-                    onChange={(e) => setFormData({ ...formData, description_id: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                  />
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold">Project Description (English) *</label>
-                  <textarea
-                    rows={3}
-                    required
-                    value={formData.description_en}
-                    onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
-                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                  />
-                </div>
-              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">

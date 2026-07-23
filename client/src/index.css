@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
   background-color: #FAFAFA;
   color: #18181B;
@@ -8,16 +10,27 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+html.dark body,
 .dark body {
-  background-color: #09090B;
-  color: #F4F4F5;
+  background-color: #09090B !important;
+  color: #F4F4F5 !important;
 }
 
 .border-subtle {
   border-color: #E4E4E7;
 }
 
+html.dark .border-subtle,
 .dark .border-subtle {
+  border-color: #27272A;
+}
+
+.divide-subtle > :not([hidden]) ~ :not([hidden]) {
+  border-color: #E4E4E7;
+}
+
+html.dark .divide-subtle > :not([hidden]) ~ :not([hidden]),
+.dark .divide-subtle > :not([hidden]) ~ :not([hidden]) {
   border-color: #27272A;
 }
 
@@ -26,6 +39,7 @@ body {
   color: #FFFFFF;
 }
 
+html.dark ::selection,
 .dark ::selection {
   background-color: #F4F4F5;
   color: #09090B;

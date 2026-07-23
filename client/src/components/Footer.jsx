@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 
 const Footer = ({ settings }) => {
   const currentYear = new Date().getFullYear();
+  const ownerName = settings?.site_owner_name?.id || settings?.site_owner_name?.en || 'Zainal Abidin';
 
   return (
     <footer className="mt-20 pt-8 border-t border-subtle flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
-      <div>© {currentYear} Teguh Pratama. Hak cipta dilindungi.</div>
+      <div>© {currentYear} {ownerName}. Hak cipta dilindungi.</div>
       <div className="flex items-center space-x-4">
         <a href={settings?.social_github?.id || 'https://github.com'} target="_blank" rel="noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">GitHub</a>
         <a href={settings?.social_twitter?.id || 'https://twitter.com'} target="_blank" rel="noreferrer" className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">Twitter</a>

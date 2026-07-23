@@ -1,36 +1,35 @@
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
-const dotenv = require('dotenv');
+require('dotenv').config();
 
-dotenv.config();
-
-const seedDatabase = async () => {
+async function seedDatabase() {
+  let connection;
   try {
     console.log('🌱 Starting Database Initialization & Seeding...');
 
-    // 0. Connect without specifying DB to create database
     const tempConnection = await mysql.createConnection({
       host: process.env.DB_HOST || '127.0.0.1',
-      port: parseInt(process.env.DB_PORT || '3306', 10),
+      port: process.env.DB_PORT || 3306,
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASSWORD || ''
     });
 
-    await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || 'teguh_portfolio_db'}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+    const dbName = process.env.DB_NAME || 'personal_portfolio_db';
+    await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
+    console.log(`✅ Database '${dbName}' verified.`);
     await tempConnection.end();
 
-    const pool = mysql.createPool({
+    connection = await mysql.createConnection({
       host: process.env.DB_HOST || '127.0.0.1',
-      port: parseInt(process.env.DB_PORT || '3306', 10),
+      port: process.env.DB_PORT || 3306,
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || 'teguh_portfolio_db',
-      waitForConnections: true,
-      connectionLimit: 10
+      database: dbName,
+      multipleStatements: true
     });
 
-    // 1. Create Tables
-    await pool.query(`
+    // 1. Users Table
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
@@ -40,7 +39,8 @@ const seedDatabase = async () => {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
-    await pool.query(`
+    // 2. Site Settings Table
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS site_settings (
         id INT AUTO_INCREMENT PRIMARY KEY,
         setting_key VARCHAR(50) UNIQUE NOT NULL,
@@ -50,7 +50,8 @@ const seedDatabase = async () => {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
-    await pool.query(`
+    // 3. Posts Table
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS posts (
         id INT AUTO_INCREMENT PRIMARY KEY,
         slug VARCHAR(200) UNIQUE NOT NULL,
@@ -69,7 +70,8 @@ const seedDatabase = async () => {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
-    await pool.query(`
+    // 4. Projects Table
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS projects (
         id INT AUTO_INCREMENT PRIMARY KEY,
         slug VARCHAR(200) UNIQUE NOT NULL,
@@ -86,7 +88,8 @@ const seedDatabase = async () => {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
-    await pool.query(`
+    // 5. Experiences Table
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS experiences (
         id INT AUTO_INCREMENT PRIMARY KEY,
         role_id VARCHAR(200) NOT NULL,
@@ -99,7 +102,8 @@ const seedDatabase = async () => {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
-    await pool.query(`
+    // 6. Messages Table
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS messages (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
@@ -111,40 +115,64 @@ const seedDatabase = async () => {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
-    console.log('✅ Tables checked/created.');
+    // 7. Activity Logs Table
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS activity_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NULL,
+        action VARCHAR(100) NOT NULL,
+        ip_address VARCHAR(45) NOT NULL,
+        user_agent TEXT NULL,
+        status ENUM('SUCCESS', 'FAILED') NOT NULL DEFAULT 'SUCCESS',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
 
-    // 2. Seed Default Admin User
-    const [existingUsers] = await pool.query('SELECT * FROM users WHERE email = ?', ['admin@teguh.co']);
+    console.log('✅ All DB tables verified/created successfully.');
+
+    // Seed Admin User
+    const [existingUsers] = await connection.query('SELECT * FROM users WHERE email = ?', ['admin@teguh.co']);
     if (existingUsers.length === 0) {
       const hashedPassword = await bcrypt.hash('AdminSecret123!', 10);
-      await pool.query(
+      await connection.query(
         'INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)',
-        ['Teguh Pratama Admin', 'admin@teguh.co', hashedPassword]
+        ['Admin Portfolio', 'admin@teguh.co', hashedPassword]
       );
       console.log('🔑 Default Admin created: admin@teguh.co / AdminSecret123!');
     }
 
-    // 3. Seed Site Settings
+    // Seed Initial Site Settings
     const defaultSettings = [
+      {
+        key: 'site_title',
+        id: 'zainal.co',
+        en: 'zainal.co'
+      },
+      {
+        key: 'site_owner_name',
+        id: 'Zainal Abidin',
+        en: 'Zainal Abidin'
+      },
       {
         key: 'hero_status',
         id: 'Tersedia untuk Konsultasi & Proyek Q3/Q4',
-        en: 'Available for Q3/Q4 Advisory & Projects'
+        en: 'Available for Advisory & Projects Q3/Q4'
       },
       {
         key: 'hero_title',
-        id: 'Halo, saya Teguh Pratama — Software Engineer, Penulis & Arsitek Sistem.',
-        en: "Hi, I'm Teguh Pratama — Software Engineer, Writer & Systems Architect."
+        id: 'Halo, saya Software Engineer, Penulis & Arsitek Sistem.',
+        en: "Hi, I'm Software Engineer, Writer & Systems Architect."
       },
       {
         key: 'hero_desc',
-        id: 'Saya merancang infrastruktur web yang andal, mendesain pengalaman pengembang yang intuitif, dan menulis tentang pola desain perangkat lunak, sistem terdistribusi, serta teknologi modern.',
-        en: 'I craft resilient web infrastructure, design intuitive developer experiences, and write about software design patterns, distributed systems, and modern technology.'
+        id: 'Saya merancang infrastruktur web yang andal, mendesain pengalaman pengembang yang intuitif, dan menulis tentang pola desain perangkat lunak.',
+        en: 'I design reliable web infrastructure, build intuitive developer experiences, and write about software design patterns.'
       },
       {
         key: 'contact_email',
-        id: 'teguh@example.com',
-        en: 'teguh@example.com'
+        id: 'admin@zainal.co',
+        en: 'admin@zainal.co'
       },
       {
         key: 'social_github',
@@ -153,8 +181,8 @@ const seedDatabase = async () => {
       },
       {
         key: 'social_twitter',
-        id: 'https://twitter.com',
-        en: 'https://twitter.com'
+        id: 'https://x.com',
+        en: 'https://x.com'
       },
       {
         key: 'social_linkedin',
@@ -164,135 +192,100 @@ const seedDatabase = async () => {
     ];
 
     for (const setting of defaultSettings) {
-      await pool.query(
+      await connection.query(
         `INSERT INTO site_settings (setting_key, value_id, value_en)
          VALUES (?, ?, ?)
          ON DUPLICATE KEY UPDATE value_id = VALUES(value_id), value_en = VALUES(value_en)`,
         [setting.key, setting.id, setting.en]
       );
     }
-    console.log('⚙️ Default Site Settings seeded.');
+    console.log('✅ Default Site Settings seeded.');
 
-    // 4. Seed Posts
-    const [existingPosts] = await pool.query('SELECT * FROM posts LIMIT 1');
-    if (existingPosts.length === 0) {
-      const posts = [
-        {
-          slug: 'mendesain-arsitektur-microservices-tanpa-downtime-2026',
-          title_id: 'Mendesain Arsitektur Microservices Tanpa Downtime di 2026',
-          title_en: 'Architecting Zero-Downtime Microservices in 2026',
-          excerpt_id: 'Pelajaran penting dari penerapan state machine terdistribusi di cluster Kubernetes multi-wilayah tanpa gangguan pengguna.',
-          excerpt_en: 'Key lessons learned from deploying distributed state machines across multi-region Kubernetes clusters with zero client disruption.',
-          content_id: 'Dalam arsitektur terdistribusi modern, mencapai zero downtime adalah standar emas...',
-          content_en: 'In modern distributed architecture, achieving zero downtime is the gold standard...',
-          category: 'Architecture',
-          read_time: '6 min baca',
-          published_at: '2026-07-12 10:00:00'
-        },
-        {
-          slug: 'filosofi-zen-dalam-arsitektur-frontend-minimalis',
-          title_id: 'Filosofi Zen dalam Arsitektur Frontend Minimalis',
-          title_en: 'The Zen of Minimalist Frontend Architecture',
-          excerpt_id: 'Mengapa menghapus abstraksi yang tidak perlu dan dependen berat dapat menghasilkan perangkat lunak yang jauh lebih cepat dan mudah dirawat.',
-          excerpt_en: 'Why stripping unnecessary abstractions, oversized third-party dependencies, and complex build steps results in faster software.',
-          content_id: 'Minimalisme bukan hanya soal tampilan visual, tetapi juga filosofi kode...',
-          content_en: 'Minimalism is not just a visual aesthetic, but a core coding philosophy...',
-          category: 'Frontend',
-          read_time: '4 min baca',
-          published_at: '2026-06-28 14:30:00'
-        }
-      ];
-
-      for (const p of posts) {
-        await pool.query(
-          `INSERT INTO posts (slug, title_id, title_en, content_id, content_en, excerpt_id, excerpt_en, category, read_time, published_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [p.slug, p.title_id, p.title_en, p.content_id, p.content_en, p.excerpt_id, p.excerpt_en, p.category, p.read_time, p.published_at]
-        );
-      }
-      console.log('📝 Sample Blog Posts seeded.');
+    // Seed Sample Projects
+    const [existingProjects] = await connection.query('SELECT COUNT(*) as count FROM projects');
+    if (existingProjects[0].count === 0) {
+      await connection.query(`
+        INSERT INTO projects (slug, title, description_id, description_en, category, tags, project_url, github_url, is_featured, sort_order) VALUES
+        (
+          'hyper-cache-engine',
+          'HyperCache Engine',
+          'In-memory key-value store berkinerja tinggi yang dibangun dengan Rust, mendukung pub/sub dan persistensi snapshot.',
+          'High-performance in-memory key-value store built with Rust, supporting pub/sub and snapshot persistence.',
+          'System',
+          '["Rust", "Distributed Systems", "CLI"]',
+          'https://github.com',
+          'https://github.com',
+          1, 1
+        ),
+        (
+          'nexus-api-gateway',
+          'Nexus API Gateway',
+          'API Gateway ringan berbasis Node.js dengan rate-limiting otomatis, otentikasi JWT, dan penyeimbang beban terdistribusi.',
+          'Lightweight Node.js API Gateway with automatic rate-limiting, JWT auth, and distributed load balancing.',
+          'Backend',
+          '["Node.js", "Express", "Docker"]',
+          'https://github.com',
+          'https://github.com',
+          1, 2
+        )
+      `);
+      console.log('✅ Sample Projects seeded.');
     }
 
-    // 5. Seed Projects
-    const [existingProjects] = await pool.query('SELECT * FROM projects LIMIT 1');
-    if (existingProjects.length === 0) {
-      const projects = [
-        {
-          slug: 'edgecache-cli',
-          title: 'EdgeCache CLI',
-          description_id: 'Lapisan edge caching terdistribusi berkinerja tinggi untuk arsitektur microservices modern.',
-          description_en: 'High-performance distributed edge caching layer for modern microservice architectures.',
-          category: 'System',
-          tags: JSON.stringify(['Rust', 'CLI', 'Distributed Systems']),
-          project_url: 'https://github.com',
-          github_url: 'https://github.com',
-          is_featured: 1,
-          sort_order: 1
-        },
-        {
-          slug: 'typeflow-ui',
-          title: 'TypeFlow UI',
-          description_id: 'Sistem komponen UI minimalis dan aksesibel untuk platform editorial dengan kecepatan tinggi.',
-          description_en: 'Minimalist accessible design system components built for high-speed editorial platforms.',
-          category: 'Frontend',
-          tags: JSON.stringify(['TypeScript', 'React', 'Tailwind CSS']),
-          project_url: 'https://github.com',
-          github_url: 'https://github.com',
-          is_featured: 1,
-          sort_order: 2
-        }
-      ];
-
-      for (const pr of projects) {
-        await pool.query(
-          `INSERT INTO projects (slug, title, description_id, description_en, category, tags, project_url, github_url, is_featured, sort_order)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [pr.slug, pr.title, pr.description_id, pr.description_en, pr.category, pr.tags, pr.project_url, pr.github_url, pr.is_featured, pr.sort_order]
-        );
-      }
-      console.log('🚀 Sample Portfolio Projects seeded.');
+    // Seed Sample Posts
+    const [existingPosts] = await connection.query('SELECT COUNT(*) as count FROM posts');
+    if (existingPosts[0].count === 0) {
+      await connection.query(`
+        INSERT INTO posts (slug, title_id, title_en, content_id, content_en, excerpt_id, excerpt_en, category, read_time, is_published) VALUES
+        (
+          'memahami-arsitektur-event-driven',
+          'Memahami Arsitektur Event-Driven di Sistem Terdistribusi',
+          'Understanding Event-Driven Architecture in Distributed Systems',
+          '<p>Arsitektur Event-Driven (EDA) adalah pola arsitektur perangkat lunak yang memungkinkan komponen aplikasi berkomunikasi secara asinkronus melalui peristiwa (events)...</p>',
+          '<p>Event-Driven Architecture (EDA) is a software design pattern enabling components to communicate asynchronously through events...</p>',
+          'Panduan mendalam mengenai bagaimana event-driven architecture dapat meningkatkan skalabilitas dan fleksibilitas sistem terdistribusi modern.',
+          'An in-depth guide on how event-driven architecture improves scalability and flexibility in modern distributed systems.',
+          'Architecture',
+          '6 min baca',
+          1
+        )
+      `);
+      console.log('✅ Sample Posts seeded.');
     }
 
-    // 6. Seed Experiences
-    const [existingExp] = await pool.query('SELECT * FROM experiences LIMIT 1');
-    if (existingExp.length === 0) {
-      const experiences = [
-        {
-          role_id: 'Senior Systems Architect',
-          role_en: 'Senior Systems Architect',
-          company: 'TechCorp Global',
-          period: '2024 — Sekarang',
-          description_id: 'Memimpin perancangan infrastruktur cloud terdistribusi dan migrasi microservices.',
-          description_en: 'Leading distributed cloud infrastructure design and microservices migration.',
-          sort_order: 1
-        },
-        {
-          role_id: 'Lead Fullstack Engineer',
-          role_en: 'Lead Fullstack Engineer',
-          company: 'Nexus Software',
-          period: '2022 — 2024',
-          description_id: 'Mengembangkan sistem editorial skala besar dengan arsitektur headless CMS.',
-          description_en: 'Developed large scale editorial system with headless CMS architecture.',
-          sort_order: 2
-        }
-      ];
-
-      for (const e of experiences) {
-        await pool.query(
-          `INSERT INTO experiences (role_id, role_en, company, period, description_id, description_en, sort_order)
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
-          [e.role_id, e.role_en, e.company, e.period, e.description_id, e.description_en, e.sort_order]
-        );
-      }
-      console.log('💼 Sample Experiences seeded.');
+    // Seed Sample Experiences
+    const [existingExperiences] = await connection.query('SELECT COUNT(*) as count FROM experiences');
+    if (existingExperiences[0].count === 0) {
+      await connection.query(`
+        INSERT INTO experiences (role_id, role_en, company, period, description_id, description_en, sort_order) VALUES
+        (
+          'Senior Systems Architect',
+          'Senior Systems Architect',
+          'TechCorp Global',
+          '2023 — Sekarang',
+          'Memimpin perancangan arsitektur microservices skala besar dan migrasi infrastruktur ke Kubernetes.',
+          'Leading large-scale microservices architecture design and infrastructure migration to Kubernetes.',
+          1
+        ),
+        (
+          'Lead Backend Engineer',
+          'Lead Backend Engineer',
+          'DataSystems Inc.',
+          '2021 — 2023',
+          'Mengembangkan RESTful API berkinerja tinggi dengan Express.js dan PostgreSQL untuk melayani jutaan transaksi harian.',
+          'Developed high-performance RESTful APIs with Express.js and PostgreSQL serving millions of daily transactions.',
+          2
+        )
+      `);
+      console.log('✅ Sample Experiences seeded.');
     }
 
-    console.log('🎉 Database Seeding Completed Successfully!');
+    console.log('🎉 Seeding completed successfully!');
   } catch (error) {
-    console.error('❌ Database Seeding Error:', error);
+    console.error('❌ Error seeding database:', error);
   } finally {
-    process.exit(0);
+    if (connection) await connection.end();
   }
-};
+}
 
 seedDatabase();

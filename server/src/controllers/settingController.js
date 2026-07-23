@@ -1,5 +1,6 @@
 const { pool } = require('../config/db');
 const { successResponse, errorResponse } = require('../utils/responseHandler');
+const { sendTestEmail } = require('../utils/mailer');
 
 const getSettings = async (req, res, next) => {
   try {
@@ -20,7 +21,7 @@ const getSettings = async (req, res, next) => {
 
 const updateSettings = async (req, res, next) => {
   try {
-    const { settings } = req.body; // Array of { key, id, en } or Object
+    const { settings } = req.body;
     if (!settings) {
       return errorResponse(res, 'Data settings wajib diberikan.', null, 400);
     }
@@ -46,7 +47,17 @@ const updateSettings = async (req, res, next) => {
   }
 };
 
+const testSmtp = async (req, res, next) => {
+  try {
+    await sendTestEmail();
+    return successResponse(res, 'Pesan tes email berhasil dikirim! Silakan periksa inbox email Anda.');
+  } catch (error) {
+    return errorResponse(res, error.message || 'Gagal mengirim email tes.', null, 400);
+  }
+};
+
 module.exports = {
   getSettings,
-  updateSettings
+  updateSettings,
+  testSmtp
 };

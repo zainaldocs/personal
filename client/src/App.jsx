@@ -20,14 +20,16 @@ import AdminProjects from './admin/AdminProjects';
 import AdminExperiences from './admin/AdminExperiences';
 import AdminInbox from './admin/AdminInbox';
 import AdminSettings from './admin/AdminSettings';
+import AdminProfile from './admin/AdminProfile';
+import AdminLogs from './admin/AdminLogs';
 
 import api from './api/axios';
 
 const PublicLayout = ({ children, settings }) => {
   return (
     <div className="min-h-screen flex flex-col justify-between selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-900">
-      <div className="max-w-3xl mx-auto w-full px-6 sm:px-8 py-8 sm:py-12 flex-grow flex flex-col justify-between">
-        <Navbar />
+      <Navbar settings={settings} />
+      <div className="max-w-3xl mx-auto w-full px-6 sm:px-8 pb-8 sm:pb-12 pt-6 flex-grow flex flex-col justify-between">
         {children}
         <Footer settings={settings} />
       </div>
@@ -75,6 +77,8 @@ function App() {
         <Route path="experiences" element={<AdminExperiences />} />
         <Route path="inbox" element={<AdminInbox />} />
         <Route path="settings" element={<AdminSettings />} />
+        <Route path="logs" element={<AdminLogs />} />
+        <Route path="profile" element={<AdminProfile />} />
       </Route>
     </Routes>
   );

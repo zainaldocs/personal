@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axios';
-import { useLanguage } from '../context/LanguageContext';
 import { ArrowLeft, Clock, Calendar, Tag } from 'lucide-react';
 
 const BlogPost = () => {
   const { slug } = useParams();
-  const { lang } = useLanguage();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -31,7 +29,7 @@ const BlogPost = () => {
   }, [slug]);
 
   if (loading) {
-    return <div className="py-12 text-center text-sm font-mono text-zinc-500">Loading article...</div>;
+    return <div className="py-12 text-center text-sm font-mono text-zinc-500">Memuat artikel...</div>;
   }
 
   if (error || !post) {
@@ -51,7 +49,7 @@ const BlogPost = () => {
     <article className="flex-grow space-y-8">
       <Link to="/blog" className="inline-flex items-center space-x-2 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
         <ArrowLeft className="w-3.5 h-3.5" />
-        <span>{lang === 'id' ? 'Kembali ke Semua Artikel' : 'Back to All Articles'}</span>
+        <span>Kembali ke Semua Artikel</span>
       </Link>
 
       <header className="space-y-4 pb-6 border-b border-subtle">
@@ -62,7 +60,7 @@ const BlogPost = () => {
           </span>
           <span className="inline-flex items-center space-x-1">
             <Calendar className="w-3 h-3" />
-            <span>{post.published_at ? new Date(post.published_at).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}</span>
+            <span>{post.published_at ? new Date(post.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}</span>
           </span>
           <span className="inline-flex items-center space-x-1">
             <Clock className="w-3 h-3" />
@@ -71,14 +69,14 @@ const BlogPost = () => {
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-zinc-50 leading-tight">
-          {lang === 'id' ? post.title_id : post.title_en}
+          {post.title_id || post.title_en}
         </h1>
       </header>
 
       {/* Content Rendering */}
       <div 
         className="prose dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 leading-relaxed space-y-4"
-        dangerouslySetInnerHTML={{ __html: lang === 'id' ? post.content_id : post.content_en }}
+        dangerouslySetInnerHTML={{ __html: post.content_id || post.content_en }}
       />
     </article>
   );

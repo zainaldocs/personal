@@ -12,16 +12,19 @@ export const ThemeProvider = ({ children }) => {
   });
 
   useEffect(() => {
+    const root = document.documentElement;
     if (darkMode) {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
 
-  const toggleDarkMode = () => setDarkMode(prev => !prev);
+  const toggleDarkMode = () => {
+    setDarkMode(prev => !prev);
+  };
 
   return (
     <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>

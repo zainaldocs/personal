@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useLanguage } from '../context/LanguageContext';
-import { Briefcase, Code2, Terminal, Award } from 'lucide-react';
+import { Code2, Terminal } from 'lucide-react';
 
 const About = ({ settings }) => {
-  const { lang, t } = useLanguage();
+  const { t } = useLanguage();
   const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,17 +29,17 @@ const About = ({ settings }) => {
     <main className="flex-grow space-y-12">
       <div className="space-y-4">
         <h1 className="text-3xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-zinc-50">
-          {lang === 'id' ? 'Tentang Teguh Pratama' : 'About Teguh Pratama'}
+          Tentang Teguh Pratama
         </h1>
         <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          {t(settings?.hero_desc) || (lang === 'id' ? 'Software Engineer & Systems Architect dengan fokus pada pembuatan sistem terdistribusi, infrastruktur cloud, serta pengalaman pengembang yang intuitif.' : 'Software Engineer & Systems Architect focusing on distributed systems, cloud infrastructure, and developer experience.')}
+          {t(settings?.hero_desc) || 'Software Engineer & Systems Architect dengan fokus pada pembuatan sistem terdistribusi, infrastruktur cloud, serta pengalaman pengembang yang intuitif.'}
         </p>
       </div>
 
       {/* Tech Stack & Focus */}
       <div className="space-y-4 pt-4 border-t border-subtle">
         <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
-          {lang === 'id' ? 'Fokus & Spesialisasi' : 'Focus & Specialization'}
+          Fokus & Spesialisasi
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="p-4 rounded-xl border border-subtle bg-white dark:bg-zinc-900/50 space-y-2">
@@ -48,7 +48,7 @@ const About = ({ settings }) => {
               <span>Distributed Systems & Cloud</span>
             </div>
             <p className="text-xs text-zinc-600 dark:text-zinc-400">
-              {lang === 'id' ? 'Merancang arsitektur microservices, Kubernetes, caching layer, serta CI/CD pipelines.' : 'Architecting microservices, Kubernetes, caching layers, and resilient CI/CD pipelines.'}
+              Merancang arsitektur microservices, Kubernetes, caching layer, serta CI/CD pipelines.
             </p>
           </div>
 
@@ -58,7 +58,7 @@ const About = ({ settings }) => {
               <span>Full-Stack Web Engineering</span>
             </div>
             <p className="text-xs text-zinc-600 dark:text-zinc-400">
-              {lang === 'id' ? 'Pengembangan frontend React/TypeScript modern & REST API Node.js/Express berkinerja tinggi.' : 'Modern React/TypeScript frontend development & high-performance Node.js/Express REST APIs.'}
+              Pengembangan frontend React/TypeScript modern & REST API Node.js/Express berkinerja tinggi.
             </p>
           </div>
         </div>
@@ -67,11 +67,11 @@ const About = ({ settings }) => {
       {/* Career Timeline */}
       <div className="space-y-6 pt-4 border-t border-subtle">
         <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
-          {lang === 'id' ? 'Pengalaman Kerja' : 'Career Timeline'}
+          Pengalaman Kerja
         </h2>
 
         {loading ? (
-          <div className="text-sm font-mono text-zinc-500">Loading experiences...</div>
+          <div className="text-sm font-mono text-zinc-500">Memuat pengalaman...</div>
         ) : (
           <div className="space-y-6 relative border-l border-subtle pl-6 ml-2">
             {experiences.map((exp) => (
@@ -79,13 +79,13 @@ const About = ({ settings }) => {
                 <span className="absolute -left-[31px] top-1.5 w-2.5 h-2.5 rounded-full bg-zinc-400 dark:bg-zinc-600 group-hover:bg-zinc-900 dark:group-hover:bg-zinc-100 transition-colors"></span>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
-                    {lang === 'id' ? exp.role_id : exp.role_en}
+                    {exp.role_id || exp.role_en}
                     <span className="text-zinc-400 font-normal"> @ {exp.company}</span>
                   </h3>
                   <span className="text-xs font-mono text-zinc-400">{exp.period}</span>
                 </div>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
-                  {lang === 'id' ? exp.description_id : exp.description_en}
+                  {exp.description_id || exp.description_en}
                 </p>
               </div>
             ))}

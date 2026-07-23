@@ -7,15 +7,12 @@ const AdminExperiences = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [activeTab, setActiveTab] = useState('id');
 
   const [formData, setFormData] = useState({
-    role_id: '',
-    role_en: '',
+    role: '',
     company: '',
     period: '',
-    description_id: '',
-    description_en: '',
+    description: '',
     sort_order: 0
   });
   const [submitting, setSubmitting] = useState(false);
@@ -41,12 +38,10 @@ const AdminExperiences = () => {
   const handleOpenCreate = () => {
     setEditingId(null);
     setFormData({
-      role_id: '',
-      role_en: '',
+      role: '',
       company: '',
       period: '2024 — Sekarang',
-      description_id: '',
-      description_en: '',
+      description: '',
       sort_order: 0
     });
     setIsModalOpen(true);
@@ -55,12 +50,10 @@ const AdminExperiences = () => {
   const handleOpenEdit = (exp) => {
     setEditingId(exp.id);
     setFormData({
-      role_id: exp.role_id,
-      role_en: exp.role_en,
+      role: exp.role_id || exp.role_en,
       company: exp.company,
       period: exp.period,
-      description_id: exp.description_id || '',
-      description_en: exp.description_en || '',
+      description: exp.description_id || exp.description_en || '',
       sort_order: exp.sort_order || 0
     });
     setIsModalOpen(true);
@@ -79,11 +72,22 @@ const AdminExperiences = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+
+    const payload = {
+      role_id: formData.role,
+      role_en: formData.role,
+      company: formData.company,
+      period: formData.period,
+      description_id: formData.description,
+      description_en: formData.description,
+      sort_order: formData.sort_order
+    };
+
     try {
       if (editingId) {
-        await api.put(`/admin/experiences/${editingId}`, formData);
+        await api.put(`/admin/experiences/${editingId}`, payload);
       } else {
-        await api.post('/admin/experiences', formData);
+        await api.post('/admin/experiences', payload);
       }
       setIsModalOpen(false);
       fetchExperiences();
@@ -111,24 +115,23 @@ const AdminExperiences = () => {
       </div>
 
       {loading ? (
-        <div className="text-sm font-mono text-zinc-500 py-4">Loading timeline...</div>
+        <div className="text-sm font-mono text-zinc-500 py-4">Memuat timeline...</div>
       ) : (
-        <div className="rounded-2xl border border-subtle bg-white dark:bg-zinc-900 overflow-hidden">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-100 dark:bg-zinc-800/60 text-zinc-500 font-bold uppercase tracking-wider">
+        <div className="rounded-2xl border border-subtle bg-white dark:bg-zinc-900 overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead className="bg-zinc-100/80 dark:bg-zinc-800/40 text-zinc-500 font-bold uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800">
               <tr>
-                <th className="p-4">Peran / Jabatan (ID / EN)</th>
+                <th className="p-4">Peran / Jabatan</th>
                 <th className="p-4">Perusahaan</th>
                 <th className="p-4">Periode</th>
                 <th className="p-4 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-subtle">
+            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800/60">
               {experiences.map((e) => (
                 <tr key={e.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/30">
                   <td className="p-4 font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                    <div>{e.role_id}</div>
-                    <div className="text-zinc-400 font-normal italic">{e.role_en}</div>
+                    {e.role_id || e.role_en}
                   </td>
                   <td className="p-4 font-semibold">{e.company}</td>
                   <td className="p-4 font-mono text-zinc-400">{e.period}</td>
@@ -178,73 +181,28 @@ const AdminExperiences = () => {
                 </div>
               </div>
 
-              {/* Bilingual Tab Switcher */}
-              <div className="flex border-b border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('id')}
-                  className={`px-4 py-2 text-xs font-bold transition-colors ${
-                    activeTab === 'id' ? 'border-b-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100' : 'text-zinc-400'
-                  }`}
-                >
-                  🇮🇩 Indonesia
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('en')}
-                  className={`px-4 py-2 text-xs font-bold transition-colors ${
-                    activeTab === 'en' ? 'border-b-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100' : 'text-zinc-400'
-                  }`}
-                >
-                  🇬🇧 English
-                </button>
+              <div className="space-y-1">
+                <label className="text-xs font-semibold">Jabatan / Peran *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  placeholder="Senior Software Engineer"
+                  className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
+                />
               </div>
 
-              {activeTab === 'id' ? (
-                <>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Jabatan/Peran (ID) *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.role_id}
-                      onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Deskripsi Tugas (ID)</label>
-                    <textarea
-                      rows={3}
-                      value={formData.description_id}
-                      onChange={(e) => setFormData({ ...formData, description_id: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Role/Title (EN) *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.role_en}
-                      onChange={(e) => setFormData({ ...formData, role_en: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Description (EN)</label>
-                    <textarea
-                      rows={3}
-                      value={formData.description_en}
-                      onChange={(e) => setFormData({ ...formData, description_en: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                    />
-                  </div>
-                </>
-              )}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold">Deskripsi Tugas / Tanggung Jawab</label>
+                <textarea
+                  rows={3}
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Deskripsi singkat mengenai peran Anda di perusahaan ini..."
+                  className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
+                />
+              </div>
 
               <div className="flex justify-end space-x-3 pt-4 border-t border-subtle">
                 <button

@@ -2,17 +2,22 @@ const express = require('express');
 const router = express.Router();
 const { verifyAdminToken } = require('../middleware/auth');
 
-const { updateSettings } = require('../controllers/settingController');
+const { updateSettings, testSmtp } = require('../controllers/settingController');
 const { createPost, updatePost, deletePost, getPosts } = require('../controllers/postController');
 const { createProject, updateProject, deleteProject, getProjects } = require('../controllers/projectController');
 const { createExperience, updateExperience, deleteExperience, getExperiences } = require('../controllers/experienceController');
 const { getMessages, markMessageAsRead, deleteMessage } = require('../controllers/messageController');
+const { getAuditLogs } = require('../controllers/authController');
 
 // Protect all admin routes
 router.use(verifyAdminToken);
 
 // Settings
 router.put('/settings', updateSettings);
+router.post('/settings/test-smtp', testSmtp);
+
+// Security Audit Logs
+router.get('/logs', getAuditLogs);
 
 // Posts CRUD
 router.get('/posts', getPosts);

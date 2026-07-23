@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
-import { Plus, Edit2, Trash2, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import RichTextEditor from '../components/RichTextEditor';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 
 const AdminPosts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [activeTab, setActiveTab] = useState('id'); // 'id' | 'en'
 
   const [formData, setFormData] = useState({
-    title_id: '',
-    title_en: '',
-    content_id: '',
-    content_en: '',
-    excerpt_id: '',
-    excerpt_en: '',
+    title: '',
+    content: '',
+    excerpt: '',
     category: 'Architecture',
     read_time: '5 min baca',
     is_published: true
@@ -43,12 +40,9 @@ const AdminPosts = () => {
   const handleOpenCreate = () => {
     setEditingId(null);
     setFormData({
-      title_id: '',
-      title_en: '',
-      content_id: '',
-      content_en: '',
-      excerpt_id: '',
-      excerpt_en: '',
+      title: '',
+      content: '<p>Tuliskan artikel blog Anda di sini...</p>',
+      excerpt: '',
       category: 'Architecture',
       read_time: '5 min baca',
       is_published: true
@@ -59,12 +53,9 @@ const AdminPosts = () => {
   const handleOpenEdit = (post) => {
     setEditingId(post.id);
     setFormData({
-      title_id: post.title_id,
-      title_en: post.title_en,
-      content_id: post.content_id,
-      content_en: post.content_en,
-      excerpt_id: post.excerpt_id || '',
-      excerpt_en: post.excerpt_en || '',
+      title: post.title_id || post.title_en,
+      content: post.content_id || post.content_en,
+      excerpt: post.excerpt_id || post.excerpt_en || '',
       category: post.category,
       read_time: post.read_time,
       is_published: !!post.is_published
@@ -85,11 +76,24 @@ const AdminPosts = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+
+    const payload = {
+      title_id: formData.title,
+      title_en: formData.title,
+      content_id: formData.content,
+      content_en: formData.content,
+      excerpt_id: formData.excerpt,
+      excerpt_en: formData.excerpt,
+      category: formData.category,
+      read_time: formData.read_time,
+      is_published: formData.is_published
+    };
+
     try {
       if (editingId) {
-        await api.put(`/admin/posts/${editingId}`, formData);
+        await api.put(`/admin/posts/${editingId}`, payload);
       } else {
-        await api.post('/admin/posts', formData);
+        await api.post('/admin/posts', payload);
       }
       setIsModalOpen(false);
       fetchPosts();
@@ -105,7 +109,7 @@ const AdminPosts = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold font-display">Kelola Blog & Artikel</h1>
-          <p className="text-sm text-zinc-500">Tambah, edit, atau hapus artikel blog bilingual.</p>
+          <p className="text-sm text-zinc-500">Tambah, edit, atau hapus artikel blog dengan TipTap Rich Text Editor.</p>
         </div>
         <button
           onClick={handleOpenCreate}
@@ -117,25 +121,24 @@ const AdminPosts = () => {
       </div>
 
       {loading ? (
-        <div className="text-sm font-mono text-zinc-500 py-4">Loading articles...</div>
+        <div className="text-sm font-mono text-zinc-500 py-4">Memuat artikel...</div>
       ) : (
-        <div className="rounded-2xl border border-subtle bg-white dark:bg-zinc-900 overflow-hidden">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-100 dark:bg-zinc-800/60 text-zinc-500 font-bold uppercase tracking-wider">
+        <div className="rounded-2xl border border-subtle bg-white dark:bg-zinc-900 overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead className="bg-zinc-100/80 dark:bg-zinc-800/40 text-zinc-500 font-bold uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800">
               <tr>
-                <th className="p-4">Judul Artikel (ID / EN)</th>
+                <th className="p-4">Judul Artikel</th>
                 <th className="p-4">Kategori</th>
                 <th className="p-4">Status</th>
                 <th className="p-4">Tanggal</th>
                 <th className="p-4 text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-subtle">
+            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800/60">
               {posts.map((p) => (
                 <tr key={p.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/30">
-                  <td className="p-4">
-                    <div className="font-bold text-sm text-zinc-900 dark:text-zinc-100">{p.title_id}</div>
-                    <div className="text-zinc-400 italic">{p.title_en}</div>
+                  <td className="p-4 font-bold text-sm text-zinc-900 dark:text-zinc-100">
+                    {p.title_id || p.title_en}
                   </td>
                   <td className="p-4 font-mono">{p.category}</td>
                   <td className="p-4">
@@ -145,7 +148,7 @@ const AdminPosts = () => {
                       {p.is_published ? 'Published' : 'Draft'}
                     </span>
                   </td>
-                  <td className="p-4 font-mono text-zinc-400">{new Date(p.published_at).toLocaleDateString()}</td>
+                  <td className="p-4 font-mono text-zinc-400">{new Date(p.published_at).toLocaleDateString('id-ID')}</td>
                   <td className="p-4 text-right space-x-2">
                     <button onClick={() => handleOpenEdit(p)} className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                       <Edit2 className="w-4 h-4" />
@@ -164,97 +167,41 @@ const AdminPosts = () => {
       {/* Modal CRUD Form */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl bg-white dark:bg-zinc-900 border border-subtle rounded-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-3xl bg-white dark:bg-zinc-900 border border-subtle rounded-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
             <h2 className="text-lg font-bold font-display">{editingId ? 'Edit Artikel' : 'Tambah Artikel Baru'}</h2>
 
-            {/* Bilingual Tab Switcher */}
-            <div className="flex border-b border-subtle">
-              <button
-                type="button"
-                onClick={() => setActiveTab('id')}
-                className={`px-4 py-2 text-xs font-bold transition-colors ${
-                  activeTab === 'id' ? 'border-b-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100' : 'text-zinc-400'
-                }`}
-              >
-                🇮🇩 Bahasa Indonesia
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('en')}
-                className={`px-4 py-2 text-xs font-bold transition-colors ${
-                  activeTab === 'en' ? 'border-b-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100' : 'text-zinc-400'
-                }`}
-              >
-                🇬🇧 English
-              </button>
-            </div>
-
             <form onSubmit={handleSubmit} className="space-y-4">
-              {activeTab === 'id' ? (
-                <>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Judul (Bahasa Indonesia) *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.title_id}
-                      onChange={(e) => setFormData({ ...formData, title_id: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Ringkasan Excerpt (Bahasa Indonesia)</label>
-                    <textarea
-                      rows={2}
-                      value={formData.excerpt_id}
-                      onChange={(e) => setFormData({ ...formData, excerpt_id: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Isi Artikel HTML/Text (Bahasa Indonesia) *</label>
-                    <textarea
-                      rows={6}
-                      required
-                      value={formData.content_id}
-                      onChange={(e) => setFormData({ ...formData, content_id: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm font-mono"
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Title (English) *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.title_en}
-                      onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Excerpt (English)</label>
-                    <textarea
-                      rows={2}
-                      value={formData.excerpt_en}
-                      onChange={(e) => setFormData({ ...formData, excerpt_en: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold">Article Content HTML/Text (English) *</label>
-                    <textarea
-                      rows={6}
-                      required
-                      value={formData.content_en}
-                      onChange={(e) => setFormData({ ...formData, content_en: e.target.value })}
-                      className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm font-mono"
-                    />
-                  </div>
-                </>
-              )}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold">Judul Artikel *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Judul artikel blog..."
+                  className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold">Ringkasan Excerpt</label>
+                <textarea
+                  rows={2}
+                  value={formData.excerpt}
+                  onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                  placeholder="Ringkasan singkat artikel..."
+                  className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
+                />
+              </div>
+
+              {/* TipTap Rich Text Editor */}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold">Isi Konten Artikel (TipTap Rich Text Editor) *</label>
+                <RichTextEditor
+                  content={formData.content}
+                  onChange={(html) => setFormData({ ...formData, content: html })}
+                />
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">

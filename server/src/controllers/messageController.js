@@ -1,10 +1,16 @@
 const { pool } = require('../config/db');
 const { successResponse, errorResponse } = require('../utils/responseHandler');
+const { sendNewMessageNotification } = require('../utils/mailer');
 const sanitizeHtml = require('sanitize-html');
 
 const createMessage = async (req, res, next) => {
   try {
-    const { name, email, subject, message } = req.body;
+    const { name, email, subject, message, website_url } = req.body;
+
+    // Invisible Honeypot Anti-Bot check: If website_url is filled by a bot, reject
+    if (website_url) {
+      return successResponse(res, 'Pesan Anda berhasil terkirim.', { id: 0 }, 201);
+    }
 
     if (!name || !email || !message) {
       return errorResponse(res, 'Nama, email, dan pesan wajib diisi.', null, 400);
@@ -19,6 +25,14 @@ const createMessage = async (req, res, next) => {
       'INSERT INTO messages (name, email, subject, message) VALUES (?, ?, ?, ?)',
       [cleanName, cleanEmail, cleanSubject, cleanMessage]
     );
+
+    // Asynchronously send email notification to Admin
+    sendNewMessageNotification({
+      name: cleanName,
+      email: cleanEmail,
+      subject: cleanSubject,
+      message: cleanMessage
+    });
 
     return successResponse(res, 'Pesan Anda berhasil terkirim. Terima kasih telah menghubungi!', { id: result.insertId }, 201);
   } catch (error) {

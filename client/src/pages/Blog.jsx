@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { useLanguage } from '../context/LanguageContext';
 import { Search } from 'lucide-react';
 
 const Blog = () => {
-  const { lang } = useLanguage();
   const [posts, setPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -40,10 +38,10 @@ const Blog = () => {
     <main className="flex-grow space-y-8">
       <div className="space-y-3">
         <h1 className="text-3xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-zinc-50">
-          {lang === 'id' ? 'Tulisan & Artikel' : 'Writing & Articles'}
+          Tulisan & Artikel
         </h1>
         <p className="text-base text-zinc-600 dark:text-zinc-400">
-          {lang === 'id' ? 'Pemikiran, panduan teknis, dan catatan arsitektur mengenai pengembangan perangkat lunak dan desain sistem.' : 'Thoughts, technical guides, and architectural notes on software engineering and system design.'}
+          Pemikiran, panduan teknis, dan catatan arsitektur mengenai pengembangan perangkat lunak dan desain sistem.
         </p>
       </div>
 
@@ -55,7 +53,7 @@ const Blog = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={lang === 'id' ? 'Cari artikel berdasarkan judul atau kata kunci...' : 'Search articles by title or keyword...'}
+            placeholder="Cari artikel berdasarkan judul atau kata kunci..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none transition-colors"
           />
         </div>
@@ -71,7 +69,7 @@ const Blog = () => {
                   : 'border-subtle bg-transparent text-zinc-600 dark:text-zinc-400 hover:border-zinc-400'
               }`}
             >
-              {cat === 'all' ? (lang === 'id' ? 'Semua' : 'All') : cat}
+              {cat === 'all' ? 'Semua' : cat}
             </button>
           ))}
         </div>
@@ -80,10 +78,10 @@ const Blog = () => {
       {/* Articles List */}
       <div className="space-y-6 pt-4 border-t border-subtle">
         {loading ? (
-          <div className="text-sm font-mono text-zinc-500">Loading articles...</div>
+          <div className="text-sm font-mono text-zinc-500">Memuat artikel...</div>
         ) : posts.length === 0 ? (
           <div className="text-sm text-zinc-500 py-8 text-center">
-            {lang === 'id' ? 'Tidak ada artikel yang cocok.' : 'No articles found matching your criteria.'}
+            Tidak ada artikel yang cocok dengan pencarian Anda.
           </div>
         ) : (
           <div className="divide-y divide-subtle">
@@ -91,14 +89,14 @@ const Blog = () => {
               <article key={art.id} className="py-5 first:pt-0 last:pb-0 group">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
                   <Link to={`/blog/${art.slug}`} className="font-bold text-lg text-zinc-900 dark:text-zinc-100 group-hover:underline">
-                    {lang === 'id' ? art.title_id : art.title_en}
+                    {art.title_id || art.title_en}
                   </Link>
                   <span className="text-xs font-mono text-zinc-400 whitespace-nowrap">
-                    {art.published_at ? new Date(art.published_at).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : ''} · {art.read_time}
+                    {art.published_at ? new Date(art.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : ''} · {art.read_time}
                   </span>
                 </div>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
-                  {lang === 'id' ? art.excerpt_id : art.excerpt_en}
+                  {art.excerpt_id || art.excerpt_en}
                 </p>
                 <div className="mt-2 inline-block">
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">

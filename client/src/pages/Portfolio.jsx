@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
-import { useLanguage } from '../context/LanguageContext';
 import { ExternalLink, Code2 } from 'lucide-react';
 
 const GithubIcon = ({ className }) => (
@@ -10,7 +9,6 @@ const GithubIcon = ({ className }) => (
 );
 
 const Portfolio = () => {
-  const { lang } = useLanguage();
   const [projects, setProjects] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -42,10 +40,10 @@ const Portfolio = () => {
     <main className="flex-grow space-y-8">
       <div className="space-y-3">
         <h1 className="text-3xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-zinc-50">
-          {lang === 'id' ? 'Portofolio & Proyek' : 'Portfolio & Projects'}
+          Portofolio & Proyek
         </h1>
         <p className="text-base text-zinc-600 dark:text-zinc-400">
-          {lang === 'id' ? 'Kumpulan alat open-source, pustaka sistem, dan aplikasi web yang telah saya bangun.' : 'Collection of open-source tools, system libraries, and web applications I have crafted.'}
+          Kumpulan alat open-source, pustaka sistem, dan aplikasi web yang telah saya bangun.
         </p>
       </div>
 
@@ -61,7 +59,7 @@ const Portfolio = () => {
                 : 'border-subtle bg-transparent text-zinc-600 dark:text-zinc-400 hover:border-zinc-400'
             }`}
           >
-            {cat === 'all' ? (lang === 'id' ? 'Semua Proyek' : 'All Projects') : cat}
+            {cat === 'all' ? 'Semua Proyek' : cat}
           </button>
         ))}
       </div>
@@ -69,10 +67,10 @@ const Portfolio = () => {
       {/* Projects Grid */}
       <div className="space-y-6 pt-4 border-t border-subtle">
         {loading ? (
-          <div className="text-sm font-mono text-zinc-500">Loading projects...</div>
+          <div className="text-sm font-mono text-zinc-500">Memuat proyek...</div>
         ) : projects.length === 0 ? (
           <div className="text-sm text-zinc-500 py-8 text-center">
-            {lang === 'id' ? 'Belum ada proyek dalam kategori ini.' : 'No projects found in this category.'}
+            Belum ada proyek dalam kategori ini.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
@@ -100,7 +98,7 @@ const Portfolio = () => {
                     </div>
                   </div>
                   <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    {lang === 'id' ? p.description_id : p.description_en}
+                    {p.description_id || p.description_en}
                   </p>
                 </div>
 

@@ -1,6 +1,6 @@
--- Database Schema for Teguh Pratama Dynamic Personal Website & CMS
-CREATE DATABASE IF NOT EXISTS `teguh_portfolio_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `teguh_portfolio_db`;
+-- Database Schema for Personal Website & Admin Panel CMS
+CREATE DATABASE IF NOT EXISTS `personal_portfolio_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `personal_portfolio_db`;
 
 -- 1. Users Table (Admin authentication)
 CREATE TABLE IF NOT EXISTS `users` (
@@ -75,4 +75,16 @@ CREATE TABLE IF NOT EXISTS `messages` (
     `message` TEXT NOT NULL,
     `is_read` TINYINT(1) DEFAULT 0,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Activity Logs Table (Security Audit Trail)
+CREATE TABLE IF NOT EXISTS `activity_logs` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NULL,
+    `action` VARCHAR(100) NOT NULL,
+    `ip_address` VARCHAR(45) NOT NULL,
+    `user_agent` TEXT NULL,
+    `status` ENUM('SUCCESS', 'FAILED') NOT NULL DEFAULT 'SUCCESS',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
