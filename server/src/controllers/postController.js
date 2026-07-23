@@ -1,16 +1,7 @@
 const { pool } = require('../config/db');
 const { successResponse, errorResponse } = require('../utils/responseHandler');
+const { generateSlug } = require('../utils/slugHelper');
 const sanitizeHtml = require('sanitize-html');
-
-// Helper to generate slug
-const generateSlug = (text) => {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
 
 const getPosts = async (req, res, next) => {
   try {
@@ -18,7 +9,6 @@ const getPosts = async (req, res, next) => {
     let query = 'SELECT id, slug, title_id, title_en, excerpt_id, excerpt_en, category, read_time, is_published, published_at, created_at FROM posts WHERE 1=1';
     const params = [];
 
-    // Filter published only for public requests unless specified
     if (is_published !== undefined) {
       query += ' AND is_published = ?';
       params.push(is_published === 'true' || is_published === '1' ? 1 : 0);
@@ -47,7 +37,10 @@ const getPosts = async (req, res, next) => {
 const getPostBySlug = async (req, res, next) => {
   try {
     const { slug } = req.params;
-    const [posts] = await pool.query('SELECT * FROM posts WHERE slug = ?', [slug]);
+    const [posts] = await pool.query(
+      'SELECT id, slug, title_id, title_en, content_id, content_en, excerpt_id, excerpt_en, category, read_time, is_published, published_at, created_at FROM posts WHERE slug = ?',
+      [slug]
+    );
 
     if (posts.length === 0) {
       return errorResponse(res, 'Artikel tidak ditemukan.', null, 404);

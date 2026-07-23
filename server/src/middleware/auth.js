@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { getJwtSecret } = require('../config/jwt');
 const { errorResponse } = require('../utils/responseHandler');
 
 const verifyAdminToken = (req, res, next) => {
@@ -9,7 +10,7 @@ const verifyAdminToken = (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_teguh_pratama_jwt_key_2026_secure');
+    const decoded = jwt.verify(token, getJwtSecret());
     
     req.user = decoded;
     next();

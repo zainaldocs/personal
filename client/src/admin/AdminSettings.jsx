@@ -4,7 +4,7 @@ import { Save, CheckCircle, Mail, Send, AlertCircle, Layout } from 'lucide-react
 
 const AdminSettings = () => {
   const [settings, setSettings] = useState({
-    site_title: 'personal.co',
+    site_title: 'zainal.co',
     site_owner_name: 'Zainal Abidin',
     hero_status: '',
     hero_title: '',
@@ -33,7 +33,7 @@ const AdminSettings = () => {
         if (res.data.success && res.data.data) {
           const raw = res.data.data;
           setSettings({
-            site_title: raw.site_title?.id || raw.site_title?.en || 'personal.co',
+            site_title: raw.site_title?.id || raw.site_title?.en || 'zainal.co',
             site_owner_name: raw.site_owner_name?.id || raw.site_owner_name?.en || 'Zainal Abidin',
             hero_status: raw.hero_status?.id || raw.hero_status?.en || '',
             hero_title: raw.hero_title?.id || raw.hero_title?.en || '',
@@ -80,8 +80,6 @@ const AdminSettings = () => {
       await api.put('/admin/settings', { settings: formattedPayload });
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
-      // Reload page state to update navbar/footer titles immediately
-      window.location.reload();
     } catch (err) {
       alert('Gagal menyimpan pengaturan.');
     } finally {

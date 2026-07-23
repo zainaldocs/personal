@@ -4,7 +4,7 @@ import api from '../api/axios';
 import { User, Lock, Save, CheckCircle, AlertCircle } from 'lucide-react';
 
 const AdminProfile = () => {
-  const { user, login } = useAuth();
+  const { user } = useAuth();
 
   // Profile Form State
   const [profileData, setProfileData] = useState({
@@ -54,8 +54,8 @@ const AdminProfile = () => {
       return;
     }
 
-    if (passwordData.newPassword.length < 6) {
-      setPasswordStatus({ type: 'error', message: 'Password baru minimal harus 6 karakter.' });
+    if (passwordData.newPassword.length < 8) {
+      setPasswordStatus({ type: 'error', message: 'Password baru minimal harus 8 karakter.' });
       setPasswordSaving(false);
       return;
     }
@@ -152,7 +152,7 @@ const AdminProfile = () => {
           </div>
           <div>
             <h2 className="text-base font-bold font-display">Perbarui Kata Sandi (Password)</h2>
-            <p className="text-xs text-zinc-500">Amankan akun Anda dengan kata sandi baru yang kuat (minimal 6 karakter).</p>
+            <p className="text-xs text-zinc-500">Amankan akun Anda dengan kata sandi baru yang kuat (minimal 8 karakter).</p>
           </div>
         </div>
 
@@ -188,7 +188,7 @@ const AdminProfile = () => {
                 required
                 value={passwordData.newPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                placeholder="Minimal 6 karakter"
+                placeholder="Minimal 8 karakter"
                 className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm font-mono"
               />
             </div>

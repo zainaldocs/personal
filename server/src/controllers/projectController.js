@@ -1,14 +1,6 @@
 const { pool } = require('../config/db');
 const { successResponse, errorResponse } = require('../utils/responseHandler');
-
-const generateSlug = (text) => {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
+const { generateSlug } = require('../utils/slugHelper');
 
 const getProjects = async (req, res, next) => {
   try {
@@ -29,7 +21,6 @@ const getProjects = async (req, res, next) => {
 
     const [projects] = await pool.query(query, params);
 
-    // Parse JSON tags
     const parsedProjects = projects.map(p => ({
       ...p,
       tags: typeof p.tags === 'string' ? JSON.parse(p.tags) : p.tags

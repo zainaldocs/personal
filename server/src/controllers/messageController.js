@@ -16,6 +16,12 @@ const createMessage = async (req, res, next) => {
       return errorResponse(res, 'Nama, email, dan pesan wajib diisi.', null, 400);
     }
 
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return errorResponse(res, 'Format email tidak valid. Silakan periksa kembali email Anda.', null, 400);
+    }
+
     const cleanName = sanitizeHtml(name);
     const cleanEmail = sanitizeHtml(email);
     const cleanSubject = subject ? sanitizeHtml(subject) : 'Pertanyaan Umum';
@@ -42,7 +48,15 @@ const createMessage = async (req, res, next) => {
 
 const getMessages = async (req, res, next) => {
   try {
-    const [messages] = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
+    const page = Math.max(1, parseInt(req.query.page || '1', 10));
+    const limit = Math.min(100, Math.max(10, parseInt(req.query.limit || '50', 10)));
+    const offset = (page - 1) * limit;
+
+    const [messages] = await pool.query(
+      'SELECT * FROM messages ORDER BY created_at DESC LIMIT ? OFFSET ?',
+      [limit, offset]
+    );
+
     return successResponse(res, 'Daftar pesan berhasil diambil.', messages);
   } catch (error) {
     next(error);
