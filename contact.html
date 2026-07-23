@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hubungi Saya — Teguh Pratama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', '"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { background-color: #FAFAFA; color: #18181B; font-family: 'Inter', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+    .dark body { background-color: #09090B; color: #F4F4F5; }
+    .border-subtle { border-color: #E4E4E7; }
+    .dark .border-subtle { border-color: #27272A; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-zinc-900 selection:text-white dark:selection:bg-zinc-100 dark:selection:text-zinc-900">
+
+  <div class="max-w-3xl mx-auto w-full px-6 sm:px-8 py-8 sm:py-12 flex-grow flex flex-col justify-between">
+    
+    <header class="mb-14 pb-6 border-b border-subtle flex items-center justify-between">
+      <a href="index.html" class="group flex items-center space-x-2 text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-100 hover:opacity-80 transition-opacity">
+        <span class="w-3 h-3 rounded-full bg-zinc-900 dark:bg-zinc-100 inline-block group-hover:scale-125 transition-transform"></span>
+        <span class="font-display">teguh.co</span>
+      </a>
+
+      <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+        <a href="index.html" class="py-1 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100" data-i18n="nav_home">Beranda</a>
+        <a href="about.html" class="py-1 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100" data-i18n="nav_about">Tentang</a>
+        <a href="blog.html" class="py-1 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100" data-i18n="nav_blog">Blog</a>
+        <a href="portfolio.html" class="py-1 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100" data-i18n="nav_portfolio">Portofolio</a>
+        <a href="contact.html" class="py-1 font-bold text-zinc-900 dark:text-zinc-100" data-i18n="nav_contact">Kontak</a>
+      </nav>
+
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <button id="lang-toggle" onclick="toggleLanguage()" class="px-2.5 py-1 rounded-lg border border-subtle text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 flex items-center space-x-1.5">
+          <i class="fa-solid fa-globe text-xs"></i>
+          <span id="lang-label">ID</span>
+        </button>
+
+        <button id="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode" class="p-2 rounded-lg text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
+          <i class="fa-solid fa-moon text-base dark:hidden"></i>
+          <i class="fa-solid fa-sun text-base hidden dark:inline"></i>
+        </button>
+
+        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden p-2 text-zinc-600 dark:text-zinc-400">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+      </div>
+    </header>
+
+    <div id="mobile-menu" class="hidden md:hidden mb-10 pb-6 border-b border-subtle flex flex-col space-y-3 text-base font-medium">
+      <a href="index.html" class="py-2 text-zinc-700 dark:text-zinc-300" data-i18n="nav_home">Beranda</a>
+      <a href="about.html" class="py-2 text-zinc-700 dark:text-zinc-300" data-i18n="nav_about">Tentang</a>
+      <a href="blog.html" class="py-2 text-zinc-700 dark:text-zinc-300" data-i18n="nav_blog">Blog</a>
+      <a href="portfolio.html" class="py-2 text-zinc-700 dark:text-zinc-300" data-i18n="nav_portfolio">Portofolio</a>
+      <a href="contact.html" class="py-2 text-zinc-900 dark:text-zinc-100 font-bold" data-i18n="nav_contact">Kontak</a>
+    </div>
+
+    <main class="flex-grow space-y-8">
+      <div class="space-y-3">
+        <h1 class="text-3xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-zinc-50" data-i18n="contact_title">Hubungi Saya</h1>
+        <p class="text-base text-zinc-600 dark:text-zinc-400" data-i18n="contact_subtitle">
+          Punya ide proyek, pertanyaan teknis, atau ingin berkolaborasi? Isi formulir di bawah ini atau kirim email langsung.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-2">
+        <div class="md:col-span-2 space-y-6">
+          <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+            <div>
+              <label for="form-name" class="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1.5" data-i18n="lbl_name">Nama Anda</label>
+              <input type="text" id="form-name" required placeholder="Budi Santoso" class="w-full px-4 py-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none" />
+            </div>
+
+            <div>
+              <label for="form-email" class="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1.5" data-i18n="lbl_email">Alamat Email</label>
+              <input type="email" id="form-email" required placeholder="budi@example.com" class="w-full px-4 py-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none" />
+            </div>
+
+            <div>
+              <label for="form-message" class="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1.5" data-i18n="lbl_message">Pesan</label>
+              <textarea id="form-message" rows="5" required placeholder="Ceritakan tentang proyek Anda..." class="w-full px-4 py-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none resize-none"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold text-sm hover:opacity-90 flex items-center justify-center space-x-2">
+              <span data-i18n="btn_send">Kirim Pesan</span>
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+            </button>
+          </form>
+
+          <div id="contact-success-msg" class="hidden p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-sm font-medium flex items-center space-x-3">
+            <i class="fa-solid fa-circle-check text-lg"></i>
+            <span data-i18n="msg_success">Terima kasih! Pesan Anda telah terkirim. Saya akan membalas dalam kurun waktu 24 jam.</span>
+          </div>
+        </div>
+
+        <div class="space-y-6 pt-2 border-t md:border-t-0 md:border-l border-subtle md:pl-6">
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-2" data-i18n="lbl_direct_email">Email Langsung</h3>
+            <a href="mailto:hello@teguh.co" class="text-sm font-mono font-semibold text-zinc-900 dark:text-zinc-100 hover:underline">hello@teguh.co</a>
+          </div>
+
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-2" data-i18n="lbl_location">Lokasi & Waktu</h3>
+            <p class="text-sm text-zinc-600 dark:text-zinc-400">Jakarta, Indonesia (GMT+7)</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="mt-20 pt-8 border-t border-subtle flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
+      <div>© 2026 Teguh Pratama. Hak cipta dilindungi.</div>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com" target="_blank" class="hover:text-zinc-900 dark:hover:text-zinc-100">GitHub</a>
+        <a href="https://twitter.com" target="_blank" class="hover:text-zinc-900 dark:hover:text-zinc-100">Twitter</a>
+        <a href="https://linkedin.com" target="_blank" class="hover:text-zinc-900 dark:hover:text-zinc-100">LinkedIn</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    let currentLang = localStorage.getItem('language') || 'id';
+
+    const translations = {
+      id: {
+        nav_home: "Beranda", nav_about: "Tentang", nav_blog: "Blog", nav_portfolio: "Portofolio", nav_contact: "Kontak",
+        contact_title: "Hubungi Saya", contact_subtitle: "Punya ide proyek, pertanyaan teknis, atau ingin berkolaborasi?",
+        lbl_name: "Nama Anda", lbl_email: "Alamat Email", lbl_message: "Pesan", btn_send: "Kirim Pesan",
+        msg_success: "Terima kasih! Pesan Anda telah terkirim.", lbl_direct_email: "Email Langsung", lbl_location: "Lokasi & Waktu"
+      },
+      en: {
+        nav_home: "Home", nav_about: "About", nav_blog: "Blog", nav_portfolio: "Portfolio", nav_contact: "Contact",
+        contact_title: "Get in Touch", contact_subtitle: "Have a project in mind, a technical question, or want to collaborate?",
+        lbl_name: "Your Name", lbl_email: "Email Address", lbl_message: "Message", btn_send: "Send Message",
+        msg_success: "Thank you! Your message has been sent.", lbl_direct_email: "Direct Email", lbl_location: "Location & Time"
+      }
+    };
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      document.getElementById('contact-form').classList.add('hidden');
+      document.getElementById('contact-success-msg').classList.remove('hidden');
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('language', lang);
+      document.documentElement.lang = lang;
+      document.getElementById('lang-label').innerText = lang.toUpperCase();
+
+      const dict = translations[lang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.innerText = dict[key];
+      });
+    }
+
+    function toggleLanguage() { applyLanguage(currentLang === 'id' ? 'en' : 'id'); }
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+    function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
+
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    window.onload = function() { applyLanguage(currentLang); };
+  </script>
+</body>
+</html>

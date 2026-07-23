@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+body {
+  background-color: #FAFAFA;
+  color: #18181B;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background-color: #09090B;
+  color: #F4F4F5;
+}
+
+.border-subtle {
+  border-color: #E4E4E7;
+}
+
+.dark .border-subtle {
+  border-color: #27272A;
+}
+
+::selection {
+  background-color: #18181B;
+  color: #FFFFFF;
+}
+
+.dark ::selection {
+  background-color: #F4F4F5;
+  color: #09090B;
+}
