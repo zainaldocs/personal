@@ -2,24 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { Search } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
-const Blog = () => {
+const Blog = ({ settings }) => {
+  const { t } = useLanguage();
   const [posts, setPosts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
 
-  const categories = ['all', 'Architecture', 'Frontend', 'DevOps', 'System'];
-
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
       try {
-        let url = `/public/posts?is_published=1`;
-        if (selectedCategory !== 'all') url += `&category=${selectedCategory}`;
-        if (searchQuery) url += `&q=${encodeURIComponent(searchQuery)}`;
-
-        const res = await api.get(url);
+        const res = await api.get('/public/posts?is_published=1');
         if (res.data.success) {
           setPosts(res.data.data);
         }
@@ -30,18 +26,34 @@ const Blog = () => {
       }
     };
 
-    const timer = setTimeout(fetchPosts, 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery, selectedCategory]);
+    fetchPosts();
+  }, []);
+
+  const categories = React.useMemo(() => {
+    const cats = posts.map(p => p.category).filter(Boolean);
+    return ['all', ...new Set(cats)];
+  }, [posts]);
+
+  const filteredPosts = React.useMemo(() => {
+    return posts.filter(post => {
+      const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+      const matchesSearch = !searchQuery || 
+        (post.title_id && post.title_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (post.title_en && post.title_en.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (post.excerpt_id && post.excerpt_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (post.excerpt_en && post.excerpt_en.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesCategory && matchesSearch;
+    });
+  }, [posts, selectedCategory, searchQuery]);
 
   return (
     <main className="flex-grow space-y-8">
       <div className="space-y-3">
         <h1 className="text-3xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-zinc-50">
-          Tulisan & Artikel
+          {t(settings?.blog_title) || 'Tulisan & Artikel'}
         </h1>
         <p className="text-base text-zinc-600 dark:text-zinc-400">
-          Pemikiran, panduan teknis, dan catatan arsitektur mengenai pengembangan perangkat lunak dan desain sistem.
+          {t(settings?.blog_desc) || 'Pemikiran, panduan teknis, dan catatan arsitektur mengenai pengembangan perangkat lunak dan desain sistem.'}
         </p>
       </div>
 
@@ -79,13 +91,13 @@ const Blog = () => {
       <div className="space-y-6 pt-4 border-t border-subtle">
         {loading ? (
           <div className="text-sm font-mono text-zinc-500">Memuat artikel...</div>
-        ) : posts.length === 0 ? (
+        ) : filteredPosts.length === 0 ? (
           <div className="text-sm text-zinc-500 py-8 text-center">
             Tidak ada artikel yang cocok dengan pencarian Anda.
           </div>
         ) : (
           <div className="divide-y divide-subtle">
-            {posts.map((art) => (
+            {filteredPosts.map((art) => (
               <article key={art.id} className="py-5 first:pt-0 last:pb-0 group">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
                   <Link to={`/blog/${art.slug}`} className="font-bold text-lg text-zinc-900 dark:text-zinc-100 group-hover:underline">

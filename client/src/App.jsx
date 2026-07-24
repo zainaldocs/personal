@@ -60,9 +60,9 @@ function App() {
       {/* Public Pages */}
       <Route path="/" element={<PublicLayout settings={settings}><Home settings={settings} /></PublicLayout>} />
       <Route path="/about" element={<PublicLayout settings={settings}><About settings={settings} /></PublicLayout>} />
-      <Route path="/blog" element={<PublicLayout settings={settings}><Blog /></PublicLayout>} />
+      <Route path="/blog" element={<PublicLayout settings={settings}><Blog settings={settings} /></PublicLayout>} />
       <Route path="/blog/:slug" element={<PublicLayout settings={settings}><BlogPost /></PublicLayout>} />
-      <Route path="/portfolio" element={<PublicLayout settings={settings}><Portfolio /></PublicLayout>} />
+      <Route path="/portfolio" element={<PublicLayout settings={settings}><Portfolio settings={settings} /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout settings={settings}><Contact settings={settings} /></PublicLayout>} />
 
       {/* Admin Auth Route */}

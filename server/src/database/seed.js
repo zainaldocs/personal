@@ -170,6 +170,46 @@ async function seedDatabase() {
         en: 'I design reliable web infrastructure, build intuitive developer experiences, and write about software design patterns.'
       },
       {
+        key: 'about_title',
+        id: 'Tentang Zainal Arifin',
+        en: 'About Zainal Arifin'
+      },
+      {
+        key: 'about_desc',
+        id: 'Saya merancang infrastruktur web yang andal, mendesain pengalaman pengembang yang intuitif, dan menulis tentang pola desain perangkat lunak.',
+        en: 'I design reliable web infrastructure, build intuitive developer experiences, and write about software design patterns.'
+      },
+      {
+        key: 'blog_title',
+        id: 'Tulisan & Artikel',
+        en: 'Writing & Articles'
+      },
+      {
+        key: 'blog_desc',
+        id: 'Pemikiran, panduan teknis, dan catatan arsitektur mengenai pengembangan perangkat lunak dan desain sistem.',
+        en: 'Thoughts, technical guides, and architectural notes on software development and systems design.'
+      },
+      {
+        key: 'portfolio_title',
+        id: 'Portofolio & Proyek',
+        en: 'Portfolio & Projects'
+      },
+      {
+        key: 'portfolio_desc',
+        id: 'Kumpulan alat open-source, pustaka sistem, dan aplikasi web yang telah saya bangun.',
+        en: 'A collection of open-source tools, system libraries, and web applications I have built.'
+      },
+      {
+        key: 'contact_title',
+        id: 'Hubungi Saya',
+        en: 'Contact Me'
+      },
+      {
+        key: 'contact_desc',
+        id: 'Apakah Anda memiliki proyek, diskusi arsitektur sistem terdistribusi, atau konsultasi teknis? Kirimkan pesan di bawah ini.',
+        en: 'Do you have a project, distributed systems architecture discussion, or technical consulting? Send a message below.'
+      },
+      {
         key: 'contact_email',
         id: 'admin@zainal.co',
         en: 'admin@zainal.co'

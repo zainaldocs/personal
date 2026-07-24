@@ -74,10 +74,10 @@ const Contact = ({ settings }) => {
     <main className="flex-grow space-y-8">
       <div className="space-y-3">
         <h1 className="text-3xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-zinc-50">
-          Hubungi Saya
+          {t(settings?.contact_title) || 'Hubungi Saya'}
         </h1>
         <p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          Apakah Anda memiliki proyek, diskusi arsitektur sistem terdistribusi, atau konsultasi teknis? Kirimkan pesan di bawah ini.
+          {t(settings?.contact_desc) || 'Apakah Anda memiliki proyek, diskusi arsitektur sistem terdistribusi, atau konsultasi teknis? Kirimkan pesan di bawah ini.'}
         </p>
       </div>
 
@@ -97,10 +97,10 @@ const Contact = ({ settings }) => {
           <div className="p-4 rounded-xl border border-subtle bg-white dark:bg-zinc-900/50 space-y-2">
             <div className="flex items-center space-x-2 text-zinc-700 dark:text-zinc-300 font-semibold text-xs">
               <ShieldCheck className="w-4 h-4 text-blue-500" />
-              <span>Keamanan Anti-Spam</span>
+              <span>Formulir Aman</span>
             </div>
-            <p className="text-[11px] text-zinc-500">
-              Dilindungi oleh Captcha Verifikasi Manusia, Honeypot Anti-Bot, Enkripsi SSL, dan Rate Limiter IP.
+            <p className="text-[11px] text-zinc-500 leading-relaxed">
+              Pesan Anda dikirim secara aman menggunakan enkripsi SSL dan dilindungi dari pengiriman spam otomatis.
             </p>
           </div>
         </div>
@@ -142,7 +142,7 @@ const Contact = ({ settings }) => {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="John Doe"
+                  placeholder="Nama Anda"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none transition-colors"
                 />
               </div>
@@ -157,7 +157,7 @@ const Contact = ({ settings }) => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="john@example.com"
+                  placeholder="mail@example.com"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none transition-colors"
                 />
               </div>

@@ -29,10 +29,10 @@ const About = ({ settings }) => {
     <main className="flex-grow space-y-12">
       <div className="space-y-4">
         <h1 className="text-3xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-zinc-50">
-          Tentang Teguh Pratama
+          {t(settings?.about_title) || `Tentang ${t(settings?.site_owner_name) || 'Teguh Pratama'}`}
         </h1>
-        <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          {t(settings?.hero_desc) || 'Software Engineer & Systems Architect dengan fokus pada pembuatan sistem terdistribusi, infrastruktur cloud, serta pengalaman pengembang yang intuitif.'}
+        <p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          {t(settings?.about_desc) || 'Software Engineer & Systems Architect dengan fokus pada pembuatan sistem terdistribusi, infrastruktur cloud, serta pengalaman pengembang yang intuitif.'}
         </p>
       </div>
 
@@ -80,7 +80,7 @@ const About = ({ settings }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
                     {exp.role_id || exp.role_en}
-                    <span className="text-zinc-400 font-normal"> @ {exp.company}</span>
+                    <span className="text-zinc-400 font-normal text-sm"> — {exp.company}</span>
                   </h3>
                   <span className="text-xs font-mono text-zinc-400">{exp.period}</span>
                 </div>

@@ -47,7 +47,7 @@ const Home = ({ settings }) => {
           {t(settings?.hero_title) || 'Halo, saya Teguh Pratama — Software Engineer, Penulis & Arsitek Sistem.'}
         </h1>
 
-        <p className="text-lg sm:text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
+        <p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
           {t(settings?.hero_desc) || 'Saya merancang infrastruktur web yang andal, mendesain pengalaman pengembang yang intuitif, dan menulis tentang pola desain perangkat lunak.'}
         </p>
 

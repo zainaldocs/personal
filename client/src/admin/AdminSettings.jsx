@@ -9,6 +9,14 @@ const AdminSettings = () => {
     hero_status: '',
     hero_title: '',
     hero_desc: '',
+    about_title: '',
+    about_desc: '',
+    blog_title: '',
+    blog_desc: '',
+    portfolio_title: '',
+    portfolio_desc: '',
+    contact_title: '',
+    contact_desc: '',
     contact_email: '',
     social_github: '',
     social_twitter: '',
@@ -38,6 +46,14 @@ const AdminSettings = () => {
             hero_status: raw.hero_status?.id || raw.hero_status?.en || '',
             hero_title: raw.hero_title?.id || raw.hero_title?.en || '',
             hero_desc: raw.hero_desc?.id || raw.hero_desc?.en || '',
+            about_title: raw.about_title?.id || raw.about_title?.en || '',
+            about_desc: raw.about_desc?.id || raw.about_desc?.en || '',
+            blog_title: raw.blog_title?.id || raw.blog_title?.en || '',
+            blog_desc: raw.blog_desc?.id || raw.blog_desc?.en || '',
+            portfolio_title: raw.portfolio_title?.id || raw.portfolio_title?.en || '',
+            portfolio_desc: raw.portfolio_desc?.id || raw.portfolio_desc?.en || '',
+            contact_title: raw.contact_title?.id || raw.contact_title?.en || '',
+            contact_desc: raw.contact_desc?.id || raw.contact_desc?.en || '',
             contact_email: raw.contact_email?.id || raw.contact_email?.en || '',
             social_github: raw.social_github?.id || raw.social_github?.en || '',
             social_twitter: raw.social_twitter?.id || raw.social_twitter?.en || '',
@@ -203,6 +219,114 @@ const AdminSettings = () => {
                 className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-950 text-sm"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Judul & Deskripsi Halaman-Halaman */}
+        <div className="p-5 rounded-2xl border border-subtle bg-white dark:bg-zinc-900 space-y-4">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Judul & Deskripsi Halaman Utama</h2>
+          
+          <div className="space-y-4">
+            {/* About Page */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold text-zinc-700 dark:text-zinc-300">Halaman Tentang (About)</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold">Judul Halaman Tentang</label>
+                  <input
+                    type="text"
+                    value={settings.about_title}
+                    onChange={(e) => handleChange('about_title', e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-955 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold">Deskripsi Halaman Tentang</label>
+                  <textarea
+                    rows={3}
+                    value={settings.about_desc}
+                    onChange={(e) => handleChange('about_desc', e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-955 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Blog Page */}
+            <div className="border-t border-subtle pt-3 space-y-3">
+              <h3 className="text-xs font-bold text-zinc-700 dark:text-zinc-300">Halaman Blog</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold">Judul Halaman Blog</label>
+                  <input
+                    type="text"
+                    value={settings.blog_title}
+                    onChange={(e) => handleChange('blog_title', e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-955 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold">Deskripsi Halaman Blog</label>
+                  <textarea
+                    rows={2}
+                    value={settings.blog_desc}
+                    onChange={(e) => handleChange('blog_desc', e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-955 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Portfolio Page */}
+            <div className="border-t border-subtle pt-3 space-y-3">
+              <h3 className="text-xs font-bold text-zinc-700 dark:text-zinc-300">Halaman Portofolio</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold">Judul Halaman Portofolio</label>
+                  <input
+                    type="text"
+                    value={settings.portfolio_title}
+                    onChange={(e) => handleChange('portfolio_title', e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-955 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold">Deskripsi Halaman Portofolio</label>
+                  <textarea
+                    rows={2}
+                    value={settings.portfolio_desc}
+                    onChange={(e) => handleChange('portfolio_desc', e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-955 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Page */}
+            <div className="border-t border-subtle pt-3 space-y-3">
+              <h3 className="text-xs font-bold text-zinc-700 dark:text-zinc-300">Halaman Kontak (Contact)</h3>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold">Judul Halaman Kontak</label>
+                  <input
+                    type="text"
+                    value={settings.contact_title}
+                    onChange={(e) => handleChange('contact_title', e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-955 text-sm"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold">Deskripsi Halaman Kontak</label>
+                  <textarea
+                    rows={2}
+                    value={settings.contact_desc}
+                    onChange={(e) => handleChange('contact_desc', e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-subtle bg-white dark:bg-zinc-955 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 

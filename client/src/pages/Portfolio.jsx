@@ -8,21 +8,19 @@ const GithubIcon = ({ className }) => (
   </svg>
 );
 
-const Portfolio = () => {
+import { useLanguage } from '../context/LanguageContext';
+
+const Portfolio = ({ settings }) => {
+  const { t } = useLanguage();
   const [projects, setProjects] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
-
-  const categories = ['all', 'System', 'Frontend', 'Open Source', 'Web Apps'];
 
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        let url = `/public/projects`;
-        if (selectedCategory !== 'all') url += `?category=${selectedCategory}`;
-
-        const res = await api.get(url);
+        const res = await api.get('/public/projects');
         if (res.data.success) {
           setProjects(res.data.data);
         }
@@ -34,16 +32,26 @@ const Portfolio = () => {
     };
 
     fetchProjects();
-  }, [selectedCategory]);
+  }, []);
+
+  const categories = React.useMemo(() => {
+    const cats = projects.map(p => p.category).filter(Boolean);
+    return ['all', ...new Set(cats)];
+  }, [projects]);
+
+  const filteredProjects = React.useMemo(() => {
+    if (selectedCategory === 'all') return projects;
+    return projects.filter(p => p.category === selectedCategory);
+  }, [projects, selectedCategory]);
 
   return (
     <main className="flex-grow space-y-8">
       <div className="space-y-3">
         <h1 className="text-3xl font-extrabold tracking-tight font-display text-zinc-900 dark:text-zinc-50">
-          Portofolio & Proyek
+          {t(settings?.portfolio_title) || 'Portofolio & Proyek'}
         </h1>
         <p className="text-base text-zinc-600 dark:text-zinc-400">
-          Kumpulan alat open-source, pustaka sistem, dan aplikasi web yang telah saya bangun.
+          {t(settings?.portfolio_desc) || 'Kumpulan alat open-source, pustaka sistem, dan aplikasi web yang telah saya bangun.'}
         </p>
       </div>
 
@@ -68,13 +76,13 @@ const Portfolio = () => {
       <div className="space-y-6 pt-4 border-t border-subtle">
         {loading ? (
           <div className="text-sm font-mono text-zinc-500">Memuat proyek...</div>
-        ) : projects.length === 0 ? (
+        ) : filteredProjects.length === 0 ? (
           <div className="text-sm text-zinc-500 py-8 text-center">
             Belum ada proyek dalam kategori ini.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {projects.map((p) => (
+            {filteredProjects.map((p) => (
               <div
                 key={p.id}
                 className="p-6 rounded-xl border border-subtle bg-white dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all flex flex-col justify-between space-y-4"
