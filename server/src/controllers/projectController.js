@@ -5,6 +5,9 @@ const { generateSlug } = require('../utils/slugHelper');
 const getProjects = async (req, res, next) => {
   try {
     const { category, featured } = req.query;
+    const page = req.query.page ? Math.max(1, parseInt(req.query.page, 10)) : null;
+    const limit = req.query.limit ? Math.min(100, Math.max(1, parseInt(req.query.limit, 10))) : null;
+
     let query = 'SELECT * FROM projects WHERE 1=1';
     const params = [];
 
@@ -18,6 +21,12 @@ const getProjects = async (req, res, next) => {
     }
 
     query += ' ORDER BY sort_order ASC, created_at DESC';
+
+    if (page && limit) {
+      const offset = (page - 1) * limit;
+      query += ' LIMIT ? OFFSET ?';
+      params.push(limit, offset);
+    }
 
     const [projects] = await pool.query(query, params);
 
@@ -36,12 +45,13 @@ const createProject = async (req, res, next) => {
   try {
     const { title, description_id, description_en, category, tags, project_url, github_url, is_featured, sort_order } = req.body;
 
-    if (!title || !description_id || !description_en || !category) {
-      return errorResponse(res, 'Judul, deskripsi (ID/EN), dan kategori wajib diisi.', null, 400);
+    if (!title || !description_id || !category) {
+      return errorResponse(res, 'Judul, deskripsi, dan kategori wajib diisi.', null, 400);
     }
 
     const slug = generateSlug(title) + '-' + Date.now().toString().slice(-4);
     const tagsJson = JSON.stringify(Array.isArray(tags) ? tags : [tags || 'Tech']);
+    const resolvedDescEn = description_en || description_id;
 
     const [result] = await pool.query(
       `INSERT INTO projects (slug, title, description_id, description_en, category, tags, project_url, github_url, is_featured, sort_order)
@@ -50,7 +60,7 @@ const createProject = async (req, res, next) => {
         slug,
         title,
         description_id,
-        description_en,
+        resolvedDescEn,
         category,
         tagsJson,
         project_url || '',
@@ -83,10 +93,10 @@ const updateProject = async (req, res, next) => {
        SET title = ?, description_id = ?, description_en = ?, category = ?, tags = ?, project_url = ?, github_url = ?, is_featured = ?, sort_order = ?
        WHERE id = ?`,
       [
-        title || existing[0].title,
-        description_id || existing[0].description_id,
-        description_en || existing[0].description_en,
-        category || existing[0].category,
+        title !== undefined ? title : existing[0].title,
+        description_id !== undefined ? description_id : existing[0].description_id,
+        description_en !== undefined ? description_en : existing[0].description_en,
+        category !== undefined ? category : existing[0].category,
         tagsJson,
         project_url !== undefined ? project_url : existing[0].project_url,
         github_url !== undefined ? github_url : existing[0].github_url,

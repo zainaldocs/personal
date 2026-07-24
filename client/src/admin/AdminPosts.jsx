@@ -50,17 +50,25 @@ const AdminPosts = () => {
     setIsModalOpen(true);
   };
 
-  const handleOpenEdit = (post) => {
-    setEditingId(post.id);
-    setFormData({
-      title: post.title_id || post.title_en,
-      content: post.content_id || post.content_en,
-      excerpt: post.excerpt_id || post.excerpt_en || '',
-      category: post.category,
-      read_time: post.read_time,
-      is_published: !!post.is_published
-    });
-    setIsModalOpen(true);
+  const handleOpenEdit = async (post) => {
+    try {
+      const res = await api.get(`/admin/posts/${post.id}`);
+      if (res.data.success) {
+        const fullPost = res.data.data;
+        setEditingId(fullPost.id);
+        setFormData({
+          title: fullPost.title_id || fullPost.title_en,
+          content: fullPost.content_id || fullPost.content_en || '',
+          excerpt: fullPost.excerpt_id || fullPost.excerpt_en || '',
+          category: fullPost.category,
+          read_time: fullPost.read_time,
+          is_published: !!fullPost.is_published
+        });
+        setIsModalOpen(true);
+      }
+    } catch(err) {
+      alert('Gagal mengambil data lengkap artikel.');
+    }
   };
 
   const handleDelete = async (id) => {

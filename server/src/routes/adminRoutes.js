@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { verifyAdminToken } = require('../middleware/auth');
 
-const { updateSettings, testSmtp } = require('../controllers/settingController');
-const { createPost, updatePost, deletePost, getPosts } = require('../controllers/postController');
+const { getSettings, updateSettings, testSmtp } = require('../controllers/settingController');
+const { createPost, updatePost, deletePost, getPosts, getPostById } = require('../controllers/postController');
 const { createProject, updateProject, deleteProject, getProjects } = require('../controllers/projectController');
 const { createExperience, updateExperience, deleteExperience, getExperiences } = require('../controllers/experienceController');
 const { getMessages, markMessageAsRead, deleteMessage } = require('../controllers/messageController');
@@ -13,6 +13,7 @@ const { getAuditLogs } = require('../controllers/authController');
 router.use(verifyAdminToken);
 
 // Settings
+router.get('/settings', getSettings);
 router.put('/settings', updateSettings);
 router.post('/settings/test-smtp', testSmtp);
 
@@ -21,6 +22,7 @@ router.get('/logs', getAuditLogs);
 
 // Posts CRUD
 router.get('/posts', getPosts);
+router.get('/posts/:id', getPostById);
 router.post('/posts', createPost);
 router.put('/posts/:id', updatePost);
 router.delete('/posts/:id', deletePost);

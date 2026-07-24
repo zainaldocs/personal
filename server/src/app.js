@@ -18,13 +18,15 @@ app.set('trust proxy', 1);
 // Security Middlewares
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*',
+  origin: process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',')
+    : (process.env.NODE_ENV === 'production' ? false : '*'),
   credentials: true
 }));
 
 // Body Parsers
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api/axios';
@@ -59,38 +59,10 @@ const AdminLogin = () => {
     }
   };
 
-  // Google OAuth Login Hook with explicit Account Chooser Prompt
-  const handleCustomGoogleLogin = useGoogleLogin({
-    prompt: 'select_account',
-    onSuccess: async (tokenResponse) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await api.post('/auth/google', {
-          access_token: tokenResponse.access_token
-        });
-
-        if (res.data.success && res.data.data.token) {
-          localStorage.setItem('admin_token', res.data.data.token);
-          window.location.href = '/admin/dashboard';
-        }
-      } catch (err) {
-        setError(err.response?.data?.message || 'Login via Google gagal. Pastikan akun Google yang Anda pilih terdaftar sebagai admin.');
-      } finally {
-        setLoading(false);
-      }
-    },
-    onError: () => {
-      setError('Gagal menghubungkan dengan Google Auth.');
-    }
-  });
-
   const onGoogleButtonClick = () => {
     if (!isGoogleConfigured) {
       setShowGoogleGuide(true);
-      return;
     }
-    handleCustomGoogleLogin();
   };
 
   return (
@@ -127,14 +99,44 @@ const AdminLogin = () => {
 
           {/* Google SSO Login Button */}
           <div className="space-y-2">
-            <button
-              type="button"
-              onClick={onGoogleButtonClick}
-              className="w-full py-2.5 px-4 rounded-xl border border-subtle bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 font-semibold text-xs flex items-center justify-center hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm"
-            >
-              <GoogleIcon />
-              <span>Pilih & Login dengan Akun Google</span>
-            </button>
+            {isGoogleConfigured ? (
+              <div className="flex justify-center w-full">
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    setLoading(true);
+                    setError(null);
+                    try {
+                      const res = await api.post('/auth/google', {
+                        credential: credentialResponse.credential
+                      });
+
+                      if (res.data.success && res.data.data.token) {
+                        localStorage.setItem('admin_token', res.data.data.token);
+                        window.location.href = '/admin/dashboard';
+                      }
+                    } catch (err) {
+                      setError(err.response?.data?.message || 'Login via Google gagal.');
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  onError={() => {
+                    setError('Gagal menghubungkan dengan Google Auth.');
+                  }}
+                  useOneTap
+                  theme={darkMode ? 'filled_black' : 'outline'}
+                />
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={onGoogleButtonClick}
+                className="w-full py-2.5 px-4 rounded-xl border border-subtle bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 font-semibold text-xs flex items-center justify-center hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm"
+              >
+                <GoogleIcon />
+                <span>Pilih & Login dengan Akun Google</span>
+              </button>
+            )}
 
             {showGoogleGuide && (
               <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs space-y-2">

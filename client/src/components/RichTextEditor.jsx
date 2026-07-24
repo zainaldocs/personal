@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 
 const RichTextEditor = ({ content, onChange }) => {
+  const fileInputRef = React.useRef(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -44,9 +46,27 @@ const RichTextEditor = ({ content, onChange }) => {
   }
 
   const addImage = () => {
-    const url = window.prompt('Masukkan URL Gambar (contoh: https://images.unsplash.com/...):');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+    fileInputRef.current?.click();
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate image size (e.g., max 2MB) to prevent database bloat
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran gambar terlalu besar! Maksimal 2MB.');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target.result;
+        editor.chain().focus().setImage({ src: base64 }).run();
+      };
+      reader.readAsDataURL(file);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -63,6 +83,13 @@ const RichTextEditor = ({ content, onChange }) => {
 
   return (
     <div className="border border-subtle rounded-xl overflow-hidden bg-white dark:bg-zinc-950">
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleImageUpload} 
+        accept="image/*" 
+        style={{ display: 'none' }} 
+      />
       {/* Toolbar */}
       <div className="bg-zinc-100 dark:bg-zinc-900 border-b border-subtle p-2 flex flex-wrap items-center gap-1">
         <button

@@ -157,6 +157,13 @@ Perbaikan keamanan dan kualitas kode berdasarkan hasil **Code Review** menyeluru
 * **Pengamanan Database Seeder**: Mengubah logika seeding pada `seed.js` menggunakan `INSERT IGNORE` agar pengaturan situs yang sudah disesuaikan oleh pengguna di production tidak tertimpa kembali ke nilai default saat server melakukan deploy/update kode program.
 * **Favicon Premium & Cache Buster**: Memperbarui favicon default menjadi ikon SVG premium berbentuk "Z" gradasi dengan efek glow, serta menambahkan parameter cache buster (`?v=3`) pada `index.html` untuk memaksa browser pengunjung memuat favicon baru secara instan.
 
+### 🛡️ Revisi Keamanan & Kualitas Ekstra (Qoder Review - Akhir Juli 2026)
+* **Penutupan Kebocoran Data Draft**: Rute API publik kini secara ketat menyaring artikel dengan `is_published = 1` agar draft tidak terekspos.
+* **Penguatan Google OAuth**: Beralih dari penggunaan `access_token` ke validasi ID Token (`credential`) via komponen `<GoogleLogin>` resmi untuk mencekal celah bypass/confused deputy.
+* **Pengetatan CORS & Secret**: Origin liar diblokir via konfigurasi CORS spesifik di production, dan sisa *fallback default secret* dihapus total untuk memaksa penggunaan `.env` yang benar.
+* **Peningkatan Fitur Editor TipTap (Attach Gambar Lokal)**: Konfigurasi keamanan XSS kini mengizinkan format `data:image/` sehingga pengguna dapat mengunggah gambar langsung dari komputer lokal dengan pembatasan maksimal ukuran 2 MB per gambar dan peningkatan JSON payload limit di backend (10 MB).
+* **Fungsionalitas & Kualitas Ekstra**: Memulihkan dead code (Pengaturan Admin), menyederhanakan data dwibahasa opsional, menerapkan semantik *update* yang presisi (bisa mengirim *string kosong*), serta integrasi *pagination* otomatis pada Endpoint Publik untuk meningkatkan skalabilitas database.
+
 ---
 
 ## 📄 Lisensi

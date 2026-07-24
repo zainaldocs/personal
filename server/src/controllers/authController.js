@@ -77,21 +77,11 @@ const googleLogin = async (req, res, next) => {
   const userAgent = req.headers['user-agent'] || '';
 
   try {
-    const { credential, access_token } = req.body;
+    const { credential } = req.body;
     let email = null;
     let name = null;
 
-    if (access_token) {
-      // Fetch user profile from Google API using access_token
-      const fetchRes = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
-      if (!fetchRes.ok) {
-        await logActivity(null, 'GOOGLE_LOGIN_FAILED: Invalid Access Token', ipAddress, userAgent, 'FAILED');
-        return errorResponse(res, 'Token otentikasi Google tidak valid.', null, 401);
-      }
-      const googleUser = await fetchRes.json();
-      email = googleUser.email;
-      name = googleUser.name;
-    } else if (credential) {
+    if (credential) {
       if (!process.env.GOOGLE_CLIENT_ID) {
         return errorResponse(res, 'Google OAuth Client ID belum dikonfigurasi di server.', null, 500);
       }

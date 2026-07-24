@@ -14,14 +14,17 @@ const createExperience = async (req, res, next) => {
   try {
     const { role_id, role_en, company, period, description_id, description_en, sort_order } = req.body;
 
-    if (!role_id || !role_en || !company || !period) {
-      return errorResponse(res, 'Peran (ID/EN), perusahaan, dan periode wajib diisi.', null, 400);
+    if (!role_id || !company || !period) {
+      return errorResponse(res, 'Peran, perusahaan, dan periode wajib diisi.', null, 400);
     }
+
+    const resolvedRoleEn = role_en || role_id;
+    const resolvedDescEn = description_en || description_id || '';
 
     const [result] = await pool.query(
       `INSERT INTO experiences (role_id, role_en, company, period, description_id, description_en, sort_order)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [role_id, role_en, company, period, description_id || '', description_en || '', sort_order || 0]
+      [role_id, resolvedRoleEn, company, period, description_id || '', resolvedDescEn, sort_order || 0]
     );
 
     return successResponse(res, 'Pengalaman berhasil ditambahkan.', { id: result.insertId }, 201);
@@ -45,10 +48,10 @@ const updateExperience = async (req, res, next) => {
        SET role_id = ?, role_en = ?, company = ?, period = ?, description_id = ?, description_en = ?, sort_order = ?
        WHERE id = ?`,
       [
-        role_id || existing[0].role_id,
-        role_en || existing[0].role_en,
-        company || existing[0].company,
-        period || existing[0].period,
+        role_id !== undefined ? role_id : existing[0].role_id,
+        role_en !== undefined ? role_en : existing[0].role_en,
+        company !== undefined ? company : existing[0].company,
+        period !== undefined ? period : existing[0].period,
         description_id !== undefined ? description_id : existing[0].description_id,
         description_en !== undefined ? description_en : existing[0].description_en,
         sort_order !== undefined ? sort_order : existing[0].sort_order,

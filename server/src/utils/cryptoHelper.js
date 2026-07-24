@@ -3,7 +3,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const getEncryptionKey = () => {
-  const secret = process.env.SETTINGS_ENCRYPTION_KEY || process.env.JWT_SECRET || 'personal_portfolio_default_encryption_key_2026';
+  const secret = process.env.SETTINGS_ENCRYPTION_KEY;
+  if (!secret) {
+    throw new Error('FATAL SECURITY ERROR: SETTINGS_ENCRYPTION_KEY environment variable is missing!');
+  }
   return crypto.createHash('sha256').update(secret).digest();
 };
 
