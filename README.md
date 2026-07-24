@@ -154,6 +154,8 @@ Perbaikan keamanan dan kualitas kode berdasarkan hasil **Code Review** menyeluru
 * **Keamanan & Penyederhanaan Form Kontak**:
   * Menyederhanakan penjelasan keamanan anti-spam pada halaman kontak agar lebih ramah bagi pengunjung umum ("Formulir Aman").
   * Memperbarui seluruh placeholder input formulir (Nama & Email) serta placeholder form Login Admin agar menggunakan nama umum dan email contoh (`mail@example.com`).
+* **Pengamanan Database Seeder**: Mengubah logika seeding pada `seed.js` menggunakan `INSERT IGNORE` agar pengaturan situs yang sudah disesuaikan oleh pengguna di production tidak tertimpa kembali ke nilai default saat server melakukan deploy/update kode program.
+* **Favicon Premium & Cache Buster**: Memperbarui favicon default menjadi ikon SVG premium berbentuk "Z" gradasi dengan efek glow, serta menambahkan parameter cache buster (`?v=3`) pada `index.html` untuk memaksa browser pengunjung memuat favicon baru secara instan.
 
 ---
 
