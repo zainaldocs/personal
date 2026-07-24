@@ -42,8 +42,12 @@ const getSettings = async (req, res, next) => {
         return;
       }
 
-      // Do not return encrypted smtp_pass to frontend for safety
-      if (row.setting_key === 'smtp_pass' && !isAdmin) {
+      // Mask encrypted smtp_pass even for admin
+      if (row.setting_key === 'smtp_pass' && isAdmin) {
+        settingsMap[row.setting_key] = {
+          id: row.value_id ? '********' : '',
+          en: row.value_en ? '********' : ''
+        };
         return;
       }
 
@@ -83,6 +87,7 @@ const updateSettings = async (req, res, next) => {
 
       // Encrypt sensitive SMTP password before saving to DB
       if (item.key === 'smtp_pass' && valId) {
+        if (valId === '********') continue; // Do not overwrite with mask
         valId = encrypt(valId);
         valEn = valId;
       }

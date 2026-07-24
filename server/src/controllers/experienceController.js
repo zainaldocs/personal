@@ -3,7 +3,19 @@ const { successResponse, errorResponse } = require('../utils/responseHandler');
 
 const getExperiences = async (req, res, next) => {
   try {
-    const [experiences] = await pool.query('SELECT * FROM experiences ORDER BY sort_order ASC, id DESC');
+    const page = req.query.page ? Math.max(1, parseInt(req.query.page, 10)) : null;
+    const limit = req.query.limit ? Math.min(100, Math.max(1, parseInt(req.query.limit, 10))) : null;
+
+    let query = 'SELECT * FROM experiences ORDER BY sort_order ASC, id DESC';
+    const params = [];
+
+    if (page && limit) {
+      const offset = (page - 1) * limit;
+      query += ' LIMIT ? OFFSET ?';
+      params.push(limit, offset);
+    }
+
+    const [experiences] = await pool.query(query, params);
     return successResponse(res, 'Daftar pengalaman berhasil diambil.', experiences);
   } catch (error) {
     next(error);

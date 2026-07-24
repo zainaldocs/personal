@@ -1,6 +1,4 @@
 -- Database Schema for Personal Website & Admin Panel CMS
-CREATE DATABASE IF NOT EXISTS `personal_portfolio_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `personal_portfolio_db`;
 
 -- 1. Users Table (Admin authentication)
 CREATE TABLE IF NOT EXISTS `users` (
