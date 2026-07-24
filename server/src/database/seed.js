@@ -233,13 +233,12 @@ async function seedDatabase() {
 
     for (const setting of defaultSettings) {
       await connection.query(
-        `INSERT INTO site_settings (setting_key, value_id, value_en)
-         VALUES (?, ?, ?)
-         ON DUPLICATE KEY UPDATE value_id = VALUES(value_id), value_en = VALUES(value_en)`,
+        `INSERT IGNORE INTO site_settings (setting_key, value_id, value_en)
+         VALUES (?, ?, ?)`,
         [setting.key, setting.id, setting.en]
       );
     }
-    console.log('✅ Default Site Settings seeded.');
+    console.log('✅ Default Site Settings seeded if not already present.');
 
     // Seed Sample Projects
     const [existingProjects] = await connection.query('SELECT COUNT(*) as count FROM projects');
