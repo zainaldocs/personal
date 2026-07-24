@@ -146,6 +146,15 @@ Perbaikan keamanan dan kualitas kode berdasarkan hasil **Code Review** menyeluru
 * Centralized Error Handler
 * Audit Log Trail
 
+## 🆕 Fitur Baru & Pembaruan UI (Juli 2026)
+
+* **Dinamisasi Judul & Deskripsi Halaman**: Seluruh judul dan deskripsi untuk halaman Tentang, Blog, Portofolio, dan Kontak kini sepenuhnya dinamis dan dapat diedit secara langsung dari Panel Admin > Settings.
+* **Filter Kategori Dinamis**: Filter kategori pada halaman Portofolio dan Blog kini mendeteksi kategori unik dari database secara otomatis (Client-Side Filtering) sehingga tombol kategori bertambah/berkurang sendiri tanpa hardcode.
+* **Perbaikan UI Timeline Pengalaman**: Mengubah pemisah perusahaan dari `@` menjadi `—` (dash panjang) serta mengecilkan ukuran nama perusahaan menjadi `text-sm` agar selaras dengan desain premium.
+* **Keamanan & Penyederhanaan Form Kontak**:
+  * Menyederhanakan penjelasan keamanan anti-spam pada halaman kontak agar lebih ramah bagi pengunjung umum ("Formulir Aman").
+  * Memperbarui seluruh placeholder input formulir (Nama & Email) serta placeholder form Login Admin agar menggunakan nama umum dan email contoh (`mail@example.com`).
+
 ---
 
 ## 📄 Lisensi
